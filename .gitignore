@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/.playwright
 
 # next.js
 /.next/
@@ -44,3 +47,10 @@ next-env.d.ts
 
 # Others
 .dev-docs
+
+# prisma
+/src/generated/prisma
+prisma/migrations/*.sql
+
+# storybook
+storybook-static

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --version:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm exec playwright:*)",
+      "Bash(pnpm prepare:*)",
+      "Bash(pnpm exec prisma:*)",
+      "Bash(pnpx storybook@latest init:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm format:fix:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(pnpm build-storybook:*)"
+    ]
+  }
+}
