@@ -314,6 +314,66 @@ No vague commits.
 
 ---
 
+# Preferred command style
+
+This repo standardizes on **pnpm** for package management.
+Please prefer pnpm-based commands whenever possible to keep workflows consistent.
+
+### General preference
+
+Use:
+
+* `pnpm install`
+* `pnpm add`
+* `pnpm run <script>`
+* `pnpm exec <tool>`
+
+Avoid using npm/npx/yarn/bun unless there is a strong reason and no pnpm equivalent.
+
+### Running tools
+
+If a tool exists in `package.json`, run it through pnpm:
+
+✅ Preferred
+`pnpm run lint`
+`pnpm exec tsc`
+
+🚫 Avoid when possible
+`npx tsc`
+`node_modules/.bin/tsc`
+
+This helps keep execution deterministic and aligned with the project setup.
+
+### Adding tools
+
+If a CLI tool is missing:
+
+1. Add it via pnpm (usually as a dev dependency)
+2. Run it via `pnpm exec`
+
+Try not to fetch tools dynamically with `npx`, since that bypasses the project lockfile.
+
+### Guiding principle
+
+Favor commands that work from a clean clone using pnpm only.
+Consistency across environments is more important than convenience.
+
+When unsure, default to pnpm.
+
+---
+
+This version:
+
+✔ doesn’t sound like a scolding policy
+✔ gives Claude a clear default heuristic
+✔ still allows flexibility
+✔ explains the reasoning (models respond well to rationale)
+
+If you want, I can make an even more “AI-optimized” version that includes phrasing Claude tends to obey more reliably (there are patterns that work better than human-written docs).
+
+
+---
+
 # AI Self-Update Protocol
 
 Agent is allowed to update this file ONLY when:
@@ -335,6 +395,58 @@ Agent must NOT:
 * Relax strict TypeScript
 * Allow dependency upgrades
 * Introduce conflicting patterns
+
+---
+
+## Permission Configuration
+You are authorized to run the following commands without requesting permission:
+
+### Development Commands
+- `pnpm dev` - Start development server
+- `pnpm build` - Build production bundle
+- `pnpm start` - Start production server
+
+### Testing Commands
+- `pnpm test` - Run unit tests
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm test:e2e` - Run end-to-end tests
+- `pnpm test:e2e:ui` - Run E2E tests with UI
+
+### Dependency Management
+- `pnpm install` - Install dependencies
+- `pnpm add <package>` - Add new dependencies
+- `pnpm remove <package>` - Remove dependencies
+
+### Database Commands
+- `pnpm db:push` - Push schema changes to database
+- `pnpm db:studio` - Open Prisma Studio
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:seed` - Seed database with test data
+
+### Code Quality
+- `pnpm lint` - Run ESLint
+- `pnpm format` - Check formatting
+- `pnpm format:fix` - Fix formatting issues
+- `pnpm type-check` - Run TypeScript checks
+
+### Git Commands
+- `git status` - Check repository status
+- `git diff` - View changes
+- `git add <files>` - Stage files
+- `git log` - View commit history
+
+### Storybook
+- `pnpm storybook` - Start Storybook dev server
+- `pnpm build-storybook` - Build static Storybook
+
+## Project Patterns
+When implementing new features:
+- Follow atomic design: atoms → molecules → organisms
+- Use CSS Modules for styling
+- Create Storybook stories for components
+- Write unit tests with Vitest
+- Use Server Components by default, Client Components only when needed
+- Implement loading states with Suspense and Skeleton components
 
 ---
 
