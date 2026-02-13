@@ -70,6 +70,21 @@
   margin-left: auto;
 }
 
+.navbar__authSignedIn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.navbar__authEmail {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .navbar__container {
@@ -85,6 +100,10 @@
   }
 
   .navbar__logoText {
+    display: none;
+  }
+
+  .navbar__authEmail {
     display: none;
   }
 }

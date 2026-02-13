@@ -1,0 +1,6 @@
+.authPage {
+  min-height: calc(100vh - 180px);
+  display: grid;
+  place-items: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
