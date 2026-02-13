@@ -21,7 +21,10 @@
       "Bash(pnpm list:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npm run db:generate:*)",
+      "Bash(npm run db:migrate:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
