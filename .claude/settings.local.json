@@ -24,7 +24,10 @@
       "Bash(npm run lint:*)",
       "Bash(npm run db:generate:*)",
       "Bash(npm run db:migrate:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "WebSearch",
+      "Bash(npm run test:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

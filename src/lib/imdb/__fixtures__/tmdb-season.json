@@ -1,0 +1,29 @@
+{
+  "id": 3572,
+  "season_number": 1,
+  "name": "Season 1",
+  "overview": "High school chemistry teacher Walter White's life is suddenly transformed by a dire medical diagnosis.",
+  "poster_path": "/1BP4xYv9ZG4ZVHkn63XSKXoHn4z.jpg",
+  "episode_count": 7,
+  "air_date": "2008-01-20",
+  "episodes": [
+    {
+      "id": 62085,
+      "episode_number": 1,
+      "name": "Pilot",
+      "overview": "When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to team up with a former student and create a top of the line crystal meth in a used RV, to provide for his family once he is gone.",
+      "still_path": "/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg",
+      "air_date": "2008-01-20",
+      "runtime": 58
+    },
+    {
+      "id": 62086,
+      "episode_number": 2,
+      "name": "Cat's in the Bag...",
+      "overview": "Walt and Jesse attempt to tie up loose ends. The desperate situation gets more complicated with the flip of a coin. Walt's wife, Skyler, becomes suspicious of Walt's strange behavior.",
+      "still_path": "/1BP4xYv9ZG4ZVHkn63XSKXoHn4z.jpg",
+      "air_date": "2008-01-27",
+      "runtime": 48
+    }
+  ]
+}
