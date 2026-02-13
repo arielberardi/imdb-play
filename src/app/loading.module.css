@@ -1,0 +1,27 @@
+.loading {
+  padding: 0;
+}
+
+.loading__hero {
+  width: 100%;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.loading__rails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  padding: 0 var(--spacing-xl);
+}
+
+.loading__rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.loading__cards {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: hidden;
+}

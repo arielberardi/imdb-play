@@ -1,0 +1,38 @@
+.rail {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.rail__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  padding: 0 var(--spacing-xl);
+}
+
+.rail__container {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 var(--spacing-xl);
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.rail__container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.rail__container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rail__container::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.rail__container::-webkit-scrollbar-thumb:hover {
+  background-color: #606060;
+}

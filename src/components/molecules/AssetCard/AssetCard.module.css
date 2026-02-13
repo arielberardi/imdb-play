@@ -1,0 +1,97 @@
+.assetCard {
+  width: 200px;
+  transition: transform var(--transition-base);
+}
+
+.assetCard:hover {
+  transform: scale(1.05);
+}
+
+.assetCard__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.assetCard__imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.assetCard__image {
+  object-fit: cover;
+}
+
+.assetCard__badges {
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  z-index: 1;
+}
+
+.assetCard__favorite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  color: var(--color-primary);
+}
+
+.assetCard__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.assetCard__progressBar {
+  height: 100%;
+  background-color: var(--color-primary);
+  transition: width var(--transition-base);
+}
+
+.assetCard__info {
+  margin-top: var(--spacing-sm);
+}
+
+.assetCard__title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assetCard__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.assetCard__rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: #fbbf24;
+}
+
+.assetCard__year {
+  color: var(--color-text-secondary);
+}

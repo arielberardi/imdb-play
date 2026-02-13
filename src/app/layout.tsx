@@ -1,3 +1,6 @@
+import { Footer } from "@/components/organisms/Footer";
+import { Navbar } from "@/components/organisms/Navbar";
+import { env } from "@/lib/env";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -11,9 +14,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Trigger environment validation
+  void env;
+
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -1,6 +1,67 @@
 import "@testing-library/jest-dom";
 import { render, RenderOptions } from "@testing-library/react";
 import { ReactElement } from "react";
+import { vi } from "vitest";
+
+// Mock process.env for Next.js components in browser tests
+if (
+  typeof window !== "undefined" &&
+  typeof (globalThis as unknown as { process?: unknown }).process === "undefined"
+) {
+  (globalThis as unknown as { process: { env: Record<string, string> } }).process = {
+    env: {
+      NODE_ENV: "test",
+    },
+  };
+}
+
+// Mock Next.js Image and Link components
+vi.mock("next/image", () => {
+  return {
+    default: (props: {
+      src: string;
+      alt: string;
+      fill?: boolean;
+      sizes?: string;
+      className?: string;
+      [key: string]: unknown;
+    }) => {
+      const { src, alt, fill, className, ...rest } = props;
+      if (fill) {
+        /* eslint-disable @next/next/no-img-element */
+        return (
+          <img src={src} alt={alt} className={className} style={{ objectFit: "cover" }} {...rest} />
+        );
+        /* eslint-enable @next/next/no-img-element */
+      }
+      /* eslint-disable @next/next/no-img-element */
+      return <img src={src} alt={alt} className={className} {...rest} />;
+      /* eslint-enable @next/next/no-img-element */
+    },
+  };
+});
+
+vi.mock("next/link", () => {
+  return {
+    default: ({
+      href,
+      children,
+      className,
+      ...props
+    }: {
+      href: string;
+      children: React.ReactNode;
+      className?: string;
+      [key: string]: unknown;
+    }) => {
+      return (
+        <a href={href} className={className} {...props}>
+          {children}
+        </a>
+      );
+    },
+  };
+});
 
 function AllTheProviders({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
