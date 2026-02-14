@@ -2,6 +2,7 @@
 
 import { EpisodeCard } from "@/components/molecules/EpisodeCard";
 import { Episode } from "@/lib/imdb";
+import { useTranslations } from "next-intl";
 import styles from "./EpisodeGrid.module.css";
 
 interface EpisodeGridProps {
@@ -9,10 +10,12 @@ interface EpisodeGridProps {
 }
 
 export function EpisodeGrid({ episodes }: EpisodeGridProps) {
+  const t = useTranslations("assetDetails.episodes");
+
   if (!episodes || episodes.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>No episodes available for this season.</p>
+        <p>{t("emptySeason")}</p>
       </div>
     );
   }

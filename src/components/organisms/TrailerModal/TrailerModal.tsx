@@ -2,6 +2,7 @@
 
 import { YouTubeEmbed } from "@/components/molecules/YouTubeEmbed";
 import { Trailer } from "@/lib/imdb";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import styles from "./TrailerModal.module.css";
@@ -29,6 +30,7 @@ function selectBestTrailer(trailers: Trailer[]): Trailer | null {
 }
 
 export default function TrailerModal({ isOpen, onClose, trailers }: TrailerModalProps) {
+  const t = useTranslations("assetDetails.actions");
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
@@ -38,23 +40,16 @@ export default function TrailerModal({ isOpen, onClose, trailers }: TrailerModal
   useEffect(() => {
     if (!isOpen) return;
 
-    // Store the element that opened the modal
     previousActiveElement.current = document.activeElement as HTMLElement;
-
-    // Prevent body scroll
     document.body.style.overflow = "hidden";
-
-    // Focus the close button
     closeButtonRef.current?.focus();
 
-    // Handle ESC key
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
       }
     };
 
-    // Handle Tab key for focus trap
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== "Tab" || !modalRef.current) return;
 
@@ -81,8 +76,6 @@ export default function TrailerModal({ isOpen, onClose, trailers }: TrailerModal
       document.body.style.overflow = "";
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("keydown", handleTab);
-
-      // Restore focus to the element that opened the modal
       previousActiveElement.current?.focus();
     };
   }, [isOpen, onClose]);
@@ -112,9 +105,9 @@ export default function TrailerModal({ isOpen, onClose, trailers }: TrailerModal
             ref={closeButtonRef}
             onClick={onClose}
             className={styles.closeButton}
-            aria-label="Close trailer"
+            aria-label={t("closeTrailerAria")}
           >
-            ×
+            x
           </button>
         </div>
 

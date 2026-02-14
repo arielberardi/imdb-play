@@ -37,8 +37,9 @@ describe("server-actions", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.fieldErrors?.email).toBeDefined();
-    expect(result.fieldErrors?.password).toBeDefined();
+    expect(result.messageKey).toBe("validation.fixFields");
+    expect(result.fieldErrorKeys?.email).toBe("field.email.invalid");
+    expect(result.fieldErrorKeys?.password).toBe("field.password.minLength");
   });
 
   it("returns duplicate email error on sign up", async () => {
@@ -56,7 +57,8 @@ describe("server-actions", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.fieldErrors?.email).toContain("already");
+    expect(result.messageKey).toBe("signUp.duplicateEmail");
+    expect(result.fieldErrorKeys?.email).toBe("field.email.alreadyInUse");
   });
 
   it("creates user, session, and redirects on successful sign up", async () => {
@@ -85,7 +87,7 @@ describe("server-actions", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.message).toContain("Invalid");
+    expect(result.messageKey).toBe("signIn.invalidCredentials");
   });
 
   it("creates session and redirects on successful sign in", async () => {

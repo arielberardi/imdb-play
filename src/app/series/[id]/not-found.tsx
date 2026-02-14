@@ -1,22 +1,24 @@
 import { Button } from "@/components/atoms/Button";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import styles from "./not-found.module.css";
 
-export default function SeriesNotFound() {
+export default async function SeriesNotFound() {
+  const t = await getTranslations("notFound.seriesDetails");
+  const tButtons = await getTranslations("common.buttons");
+
   return (
     <main className={styles.notFound}>
       <div className={styles.content}>
-        <h1 className={styles.title}>Series Not Found</h1>
-        <p className={styles.message}>
-          The series you&apos;re looking for doesn&apos;t exist or has been removed.
-        </p>
+        <h1 className={styles.title}>{t("title")}</h1>
+        <p className={styles.message}>{t("message")}</p>
 
         <div className={styles.actions}>
           <Link href="/series">
-            <Button>Browse Series</Button>
+            <Button>{t("browseSeries")}</Button>
           </Link>
           <Link href="/search">
-            <Button variant="secondary">Search</Button>
+            <Button variant="secondary">{tButtons("search")}</Button>
           </Link>
         </div>
       </div>

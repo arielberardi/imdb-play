@@ -10,6 +10,7 @@ import {
 import { MediaType } from "@/generated/prisma";
 import { Trailer } from "@/lib/imdb";
 import { Check, Heart, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useOptimistic, useState, useTransition } from "react";
 import styles from "./ActionButtons.module.css";
 
@@ -32,6 +33,7 @@ export function ActionButtons({
   initialIsFavorite = false,
   initialIsInWatchlist = false,
 }: ActionButtonsProps) {
+  const t = useTranslations("assetDetails.actions");
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [favoriteState, setFavoriteState] = useOptimistic(initialIsFavorite);
@@ -82,16 +84,16 @@ export function ActionButtons({
         disabled={!hasTrailers}
         className={styles.playButton}
       >
-        {hasTrailers ? "Play Trailer" : "No Trailer Available"}
+        {hasTrailers ? t("playTrailer") : t("noTrailer")}
       </Button>
 
       <button
         type="button"
         className={`${styles.iconButton} ${favoriteState ? styles.activeFavorite : ""}`}
-        title={favoriteState ? "Remove from Favorites" : "Add to Favorites"}
+        title={favoriteState ? t("removeFavoritesTitle") : t("addFavoritesTitle")}
         onClick={onToggleFavorite}
         disabled={isPending}
-        aria-label={favoriteState ? "Remove from favorites" : "Add to favorites"}
+        aria-label={favoriteState ? t("removeFavoritesAria") : t("addFavoritesAria")}
       >
         <Heart size={20} fill={favoriteState ? "currentColor" : "none"} />
       </button>
@@ -99,10 +101,10 @@ export function ActionButtons({
       <button
         type="button"
         className={`${styles.iconButton} ${watchlistState ? styles.activeWatchlist : ""}`}
-        title={watchlistState ? "Remove from Watchlist" : "Add to Watchlist"}
+        title={watchlistState ? t("removeWatchlistTitle") : t("addWatchlistTitle")}
         onClick={onToggleWatchlist}
         disabled={isPending}
-        aria-label={watchlistState ? "Remove from watchlist" : "Add to watchlist"}
+        aria-label={watchlistState ? t("removeWatchlistAria") : t("addWatchlistAria")}
       >
         {watchlistState ? <Check size={20} /> : <Plus size={20} />}
       </button>

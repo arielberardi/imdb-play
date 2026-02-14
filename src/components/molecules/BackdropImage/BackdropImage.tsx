@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import styles from "./BackdropImage.module.css";
 
@@ -9,6 +10,7 @@ interface BackdropImageProps {
 }
 
 export function BackdropImage({ backdropPath, title }: BackdropImageProps) {
+  const t = useTranslations("assetDetails");
   const imageUrl = backdropPath ? `https://image.tmdb.org/t/p/original${backdropPath}` : "";
 
   if (!imageUrl) {
@@ -19,7 +21,7 @@ export function BackdropImage({ backdropPath, title }: BackdropImageProps) {
     <div className={styles.backdrop}>
       <Image
         src={imageUrl}
-        alt={`${title} backdrop`}
+        alt={t("backdropAlt", { title })}
         fill
         priority
         className={styles.image}

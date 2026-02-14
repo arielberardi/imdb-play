@@ -1,5 +1,7 @@
+import enMessages from "@/messages/en.json";
 import "@testing-library/jest-dom";
 import { render, RenderOptions } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import { ReactElement } from "react";
 import { vi } from "vitest";
 
@@ -64,7 +66,11 @@ vi.mock("next/link", () => {
 });
 
 function AllTheProviders({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      {children}
+    </NextIntlClientProvider>
+  );
 }
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, "wrapper">) =>

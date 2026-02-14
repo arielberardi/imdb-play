@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { SearchBarWrapper } from "./components/SearchBarWrapper";
 import { SearchResults } from "./components/SearchResults";
@@ -9,13 +10,14 @@ interface SearchPageProps {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const t = await getTranslations("search");
   const params = await searchParams;
   const query = params.q || "";
 
   return (
     <main className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Search</h1>
+        <h1 className={styles.title}>{t("title")}</h1>
         <SearchBarWrapper />
       </div>
 

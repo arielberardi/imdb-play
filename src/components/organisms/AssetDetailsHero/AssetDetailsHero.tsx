@@ -3,6 +3,7 @@ import { BackdropImage } from "@/components/molecules/BackdropImage";
 import { TitleMetadata } from "@/components/molecules/TitleMetadata";
 import { TitleDetails } from "@/lib/imdb";
 import type { UserTitleState } from "@/lib/personalized-content/user-state";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import styles from "./AssetDetailsHero.module.css";
 
@@ -13,6 +14,7 @@ interface AssetDetailsHeroProps {
 }
 
 export default function AssetDetailsHero({ details, mediaType, userState }: AssetDetailsHeroProps) {
+  const t = useTranslations("assetDetails");
   const posterUrl = details.posterPath
     ? `https://image.tmdb.org/t/p/w500${details.posterPath}`
     : "";
@@ -26,7 +28,7 @@ export default function AssetDetailsHero({ details, mediaType, userState }: Asse
           {posterUrl ? (
             <Image
               src={posterUrl}
-              alt={`${details.title} poster`}
+              alt={t("posterAlt", { title: details.title })}
               width={300}
               height={450}
               priority

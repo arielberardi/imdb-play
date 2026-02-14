@@ -1,10 +1,12 @@
 "use client";
 
 import { SearchBar } from "@/components/molecules/SearchBar/SearchBar";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useRef } from "react";
 
 export function SearchBarWrapper() {
+  const t = useTranslations("search");
   const router = useRouter();
   const searchParams = useSearchParams();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,10 +36,6 @@ export function SearchBarWrapper() {
   const currentQuery = searchParams.get("q") || "";
 
   return (
-    <SearchBar
-      defaultValue={currentQuery}
-      onSearch={handleSearch}
-      placeholder="Search for movies and TV shows..."
-    />
+    <SearchBar defaultValue={currentQuery} onSearch={handleSearch} placeholder={t("placeholder")} />
   );
 }

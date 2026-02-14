@@ -8,4 +8,11 @@ export {
   getOptionalUser as readSession,
   requireUser,
 } from "./services/session.service";
-export type { AuthActionResult, AuthUser, SignInInput, SignUpInput } from "./types";
+export type {
+  AuthActionResult,
+  AuthFieldErrorKey,
+  AuthMessageKey,
+  AuthUser,
+  SignInInput,
+  SignUpInput,
+} from "./types";

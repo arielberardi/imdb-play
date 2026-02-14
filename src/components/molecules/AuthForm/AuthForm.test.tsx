@@ -28,7 +28,7 @@ describe("AuthForm", () => {
     const user = userEvent.setup();
     const action = vi.fn().mockResolvedValue({
       success: false,
-      message: "Invalid email or password.",
+      messageKey: "signIn.invalidCredentials",
     });
     render(<AuthForm mode="sign-in" action={action} />);
 

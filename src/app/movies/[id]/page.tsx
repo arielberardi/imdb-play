@@ -6,6 +6,7 @@ import { isImdbNotFoundError, toUserSafeError } from "@/lib/imdb/error-handling"
 import logger from "@/lib/logger";
 import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import styles from "./page.module.css";
@@ -15,6 +16,7 @@ interface MovieDetailPageProps {
 }
 
 export async function generateMetadata({ params }: MovieDetailPageProps): Promise<Metadata> {
+  const t = await getTranslations("metadata.movieDetails");
   const { id } = await params;
 
   try {
@@ -25,8 +27,8 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
       : "";
 
     return {
-      title: `${details.title}${year ? ` (${year})` : ""} - IMDb Play`,
-      description: details.overview || `Watch ${details.title} on IMDb Play`,
+      title: `${details.title}${year ? ` (${year})` : ""}${t("titleSuffix")}`,
+      description: details.overview || t("watchOnApp", { title: details.title }),
       openGraph: {
         title: details.title,
         description: details.overview || "",
@@ -36,12 +38,12 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
   } catch (error) {
     if (isImdbNotFoundError(error)) {
       return {
-        title: "Movie Not Found - IMDb Play",
+        title: t("notFound"),
       };
     }
 
     return {
-      title: "Movie Temporarily Unavailable - IMDb Play",
+      title: t("unavailable"),
     };
   }
 }

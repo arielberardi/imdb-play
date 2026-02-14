@@ -6,6 +6,7 @@ import { FocusRegionProvider } from "@/lib/a11y/focus-region";
 import { TV_GENRES } from "@/lib/imdb/constants";
 import { getByGenre, getPopularSeries } from "@/lib/imdb/queries";
 import type { Title } from "@/lib/imdb/types";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import styles from "./series.module.css";
 
@@ -27,6 +28,7 @@ function transformTitlesToRailItems(titles: Title[]) {
 }
 
 export default async function SeriesPage({ searchParams }: SeriesPageProps) {
+  const t = await getTranslations("series");
   const params = await searchParams;
   const selectedGenre = params.genre;
 
@@ -34,7 +36,7 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
     <FocusRegionProvider>
       <main className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.title}>TV Series</h1>
+          <h1 className={styles.title}>{t("title")}</h1>
           <FilterChips genres={TV_GENRES} basePath="/series" />
         </div>
 
@@ -47,15 +49,16 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
 }
 
 async function SeriesContent({ selectedGenre }: { selectedGenre?: string }) {
+  const t = await getTranslations("series");
   let series;
-  let title = "Popular Series";
+  let title = t("popularTitle");
 
   if (selectedGenre) {
     const genre = TV_GENRES.find((g) => g.name === selectedGenre);
     if (genre) {
       const response = await getByGenre(MediaType.SERIES, genre.id);
       series = response.results;
-      title = `${selectedGenre} Series`;
+      title = t("genreTitle", { genre: selectedGenre });
     } else {
       const response = await getPopularSeries();
       series = response.results;

@@ -1,9 +1,12 @@
 import { Skeleton } from "@/components/atoms/Skeleton";
+import { getTranslations } from "next-intl/server";
 import styles from "./loading.module.css";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("common");
+
   return (
-    <div className={styles.loading} aria-busy="true" aria-label="Loading">
+    <div className={styles.loading} aria-busy="true" aria-label={t("loading")}>
       {/* Hero skeleton */}
       <div className={styles.loading__hero}>
         <Skeleton variant="rectangular" height={500} />

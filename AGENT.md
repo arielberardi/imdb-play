@@ -520,3 +520,20 @@ Applies to:
 * `src/lib/**`
 
 Storybook examples may keep lightweight local handlers when needed for demos.
+
+---
+
+# Localization Requirement
+
+All runtime user-facing UI copy must use locale-based translations via `next-intl`.
+
+Rules:
+- Do not hardcode UI strings in `src/app/**` or runtime components in `src/components/**`.
+- Add/maintain English keys in `src/messages/en.json` for new UI text.
+- Resolve messages through `next-intl` (`getTranslations` for server components and metadata, `useTranslations` for client components).
+- For server actions, prefer stable message keys and map to translated strings in UI.
+
+This project currently supports only `en`, but implementation must remain locale-ready for future languages.
+
+## Changelog
+- Added project requirement to use `next-intl` and locale-based UI text for all runtime user-facing strings.

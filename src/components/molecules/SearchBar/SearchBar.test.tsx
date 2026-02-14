@@ -6,7 +6,7 @@ import { SearchBar } from "./SearchBar";
 describe("SearchBar", () => {
   it("renders with default placeholder", () => {
     render(<SearchBar />);
-    expect(screen.getByPlaceholderText(/search movies and series/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/search for movies and tv shows/i)).toBeInTheDocument();
   });
 
   it("renders with custom placeholder", () => {

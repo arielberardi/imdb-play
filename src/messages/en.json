@@ -1,0 +1,209 @@
+{
+  "layout": {
+    "metadata": {
+      "title": "IMDB Play",
+      "description": "Stream the IMDB Catalog"
+    },
+    "navbar": {
+      "primaryAriaLabel": "Primary",
+      "brandAriaLabel": "IMDB Play",
+      "brandText": "IMDB Play",
+      "home": "Home",
+      "films": "Films",
+      "series": "Series",
+      "search": "Search",
+      "signOut": "Sign Out",
+      "signIn": "Sign In"
+    },
+    "footer": {
+      "navAriaLabel": "Footer",
+      "about": "About",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "contact": "Contact",
+      "copyright": "(c) {year} IMDB Play. All rights reserved."
+    }
+  },
+  "common": {
+    "loading": "Loading",
+    "buttons": {
+      "tryAgain": "Try Again",
+      "search": "Search"
+    },
+    "mediaType": {
+      "movie": "Movie",
+      "series": "Series"
+    },
+    "a11y": {
+      "watchProgress": "Watch progress",
+      "favorite": "Favorite",
+      "rating": "Rating"
+    }
+  },
+  "home": {
+    "continueWatching": "Continue Watching",
+    "myFavorites": "My Favorites",
+    "trendingNow": "Trending Now",
+    "popularMovies": "Popular Movies",
+    "popularSeries": "Popular Series"
+  },
+  "errors": {
+    "global": {
+      "title": "Something went wrong",
+      "message": "We encountered an unexpected error. Please try again.",
+      "errorId": "Error ID: {digest}"
+    },
+    "auth": {
+      "title": "Authentication Unavailable",
+      "message": "We couldn't complete this authentication step. Please try again."
+    },
+    "films": {
+      "title": "Movies Unavailable",
+      "message": "We couldn't load this movie catalog right now. Please try again."
+    },
+    "series": {
+      "title": "Series Unavailable",
+      "message": "We couldn't load this series catalog right now. Please try again."
+    },
+    "search": {
+      "title": "Search Unavailable",
+      "message": "Search is temporarily unavailable. Please retry in a moment."
+    },
+    "movieDetails": {
+      "title": "Something Went Wrong",
+      "message": "We couldn't load this movie's details. Please try again.",
+      "backToMovies": "Back to Movies"
+    },
+    "seriesDetails": {
+      "title": "Something Went Wrong",
+      "message": "We couldn't load this series' details. Please try again.",
+      "backToSeries": "Back to Series"
+    }
+  },
+  "notFound": {
+    "global": {
+      "title": "404",
+      "subtitle": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "goHome": "Go Home"
+    },
+    "movieDetails": {
+      "title": "Movie Not Found",
+      "message": "The movie you're looking for doesn't exist or has been removed.",
+      "browseMovies": "Browse Movies"
+    },
+    "seriesDetails": {
+      "title": "Series Not Found",
+      "message": "The series you're looking for doesn't exist or has been removed.",
+      "browseSeries": "Browse Series"
+    }
+  },
+  "films": {
+    "title": "Movies",
+    "popularTitle": "Popular Movies",
+    "genreTitle": "{genre} Movies",
+    "allFilter": "All"
+  },
+  "series": {
+    "title": "TV Series",
+    "popularTitle": "Popular Series",
+    "genreTitle": "{genre} Series",
+    "allFilter": "All"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search for movies and TV shows...",
+    "clearAriaLabel": "Clear search",
+    "emptyTitle": "Start Your Search",
+    "emptyMessage": "Enter a movie or TV show name above to find what you're looking for",
+    "noResultsTitle": "No Results Found",
+    "noResultsMessage": "We couldn't find any titles matching \"{query}\"",
+    "noResultsSuggestion": "Try adjusting your search or checking your spelling",
+    "resultsFor": "Results for \"{query}\"",
+    "resultsCount": "{count, plural, =0 {# results} one {# result} other {# results}}"
+  },
+  "auth": {
+    "form": {
+      "signInAriaLabel": "Sign in",
+      "signUpAriaLabel": "Sign up",
+      "signInTitle": "Sign in",
+      "signUpTitle": "Create account",
+      "signInSubtitle": "Welcome back to IMDB Play.",
+      "signUpSubtitle": "Start building your watchlist.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "signInButton": "Sign In",
+      "signUpButton": "Sign Up",
+      "noAccount": "No account yet?",
+      "hasAccount": "Already have an account?",
+      "createOne": "Create one",
+      "goToSignIn": "Sign in",
+      "fallbackError": "Something went wrong."
+    },
+    "errors": {
+      "validation": {
+        "fixFields": "Please fix the highlighted fields."
+      },
+      "signUp": {
+        "duplicateEmail": "An account with this email already exists.",
+        "createFailed": "Unable to create your account right now."
+      },
+      "signIn": {
+        "invalidCredentials": "Invalid email or password.",
+        "failed": "Unable to sign you in right now."
+      },
+      "signOut": {
+        "failed": "Unable to sign out right now."
+      },
+      "field": {
+        "email": {
+          "required": "Email is required",
+          "invalid": "Please enter a valid email",
+          "alreadyInUse": "Email is already in use."
+        },
+        "password": {
+          "required": "Password is required",
+          "minLength": "Password must be at least 8 characters"
+        }
+      }
+    }
+  },
+  "assetDetails": {
+    "cast": "Cast",
+    "posterAlt": "{title} poster",
+    "backdropAlt": "{title} backdrop",
+    "actions": {
+      "playTrailer": "Play Trailer",
+      "noTrailer": "No Trailer Available",
+      "addFavoritesTitle": "Add to Favorites",
+      "removeFavoritesTitle": "Remove from Favorites",
+      "addFavoritesAria": "Add to favorites",
+      "removeFavoritesAria": "Remove from favorites",
+      "addWatchlistTitle": "Add to Watchlist",
+      "removeWatchlistTitle": "Remove from Watchlist",
+      "addWatchlistAria": "Add to watchlist",
+      "removeWatchlistAria": "Remove from watchlist",
+      "closeTrailerAria": "Close trailer"
+    },
+    "episodes": {
+      "title": "Episodes",
+      "loadError": "Failed to load episodes. Please try again.",
+      "unavailable": "Episode information not available",
+      "emptySeason": "No episodes available for this season."
+    }
+  },
+  "metadata": {
+    "movieDetails": {
+      "titleSuffix": " - IMDb Play",
+      "watchOnApp": "Watch {title} on IMDb Play",
+      "notFound": "Movie Not Found - IMDb Play",
+      "unavailable": "Movie Temporarily Unavailable - IMDb Play"
+    },
+    "seriesDetails": {
+      "titleSuffix": " - IMDb Play",
+      "watchOnApp": "Watch {title} on IMDb Play",
+      "notFound": "Series Not Found - IMDb Play",
+      "unavailable": "Series Temporarily Unavailable - IMDb Play"
+    }
+  }
+}

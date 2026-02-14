@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./FilterChips.module.css";
@@ -10,13 +11,15 @@ interface FilterChipsProps {
 }
 
 export function FilterChips({ genres, basePath }: FilterChipsProps) {
+  const namespace = basePath === "/films" ? "films" : "series";
+  const t = useTranslations(namespace);
   const searchParams = useSearchParams();
   const selectedGenre = searchParams.get("genre");
 
   return (
     <div className={styles.container}>
       <Link href={basePath} className={`${styles.chip} ${!selectedGenre ? styles.active : ""}`}>
-        All
+        {t("allFilter")}
       </Link>
       {genres.map((genre) => {
         const isActive = selectedGenre === genre.name;

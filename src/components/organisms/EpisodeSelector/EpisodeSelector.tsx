@@ -6,6 +6,7 @@ import { SeasonTabs } from "@/components/molecules/SeasonTabs";
 import { getEpisodes } from "@/lib/imdb/queries";
 import type { Episode, Season } from "@/lib/imdb/types";
 import logger from "@/lib/logger";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import styles from "./EpisodeSelector.module.css";
 
@@ -15,6 +16,8 @@ interface EpisodeSelectorProps {
 }
 
 export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps) {
+  const t = useTranslations("assetDetails.episodes");
+
   // Filter out "Specials" (season 0) and sort by season number
   const validSeasons = seasons
     .filter((season) => season.seasonNumber > 0)
@@ -45,14 +48,14 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
           },
           "Failed to fetch episodes",
         );
-        setError("Failed to load episodes. Please try again.");
+        setError(t("loadError"));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchEpisodes();
-  }, [tvId, selectedSeasonNumber]);
+  }, [tvId, selectedSeasonNumber, t]);
 
   const handleSeasonChange = (seasonNumber: number) => {
     setSelectedSeasonNumber(seasonNumber);
@@ -61,7 +64,7 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
   if (validSeasons.length === 0) {
     return (
       <div className={styles.noEpisodes}>
-        <p>Episode information not available</p>
+        <p>{t("unavailable")}</p>
       </div>
     );
   }
@@ -69,7 +72,7 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
   return (
     <section className={styles.episodeSelector}>
       <div className={styles.container}>
-        <h2 className={styles.title}>Episodes</h2>
+        <h2 className={styles.title}>{t("title")}</h2>
 
         <SeasonTabs
           seasons={validSeasons}

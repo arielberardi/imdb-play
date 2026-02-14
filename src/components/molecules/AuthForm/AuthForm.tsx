@@ -2,8 +2,15 @@
 
 import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
-import type { AuthActionResult, SignInInput, SignUpInput } from "@/features/auth";
+import type {
+  AuthActionResult,
+  AuthFieldErrorKey,
+  AuthMessageKey,
+  SignInInput,
+  SignUpInput,
+} from "@/features/auth";
 import { clsx } from "clsx";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +26,9 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ mode, action, className }: AuthFormProps) {
+  const tForm = useTranslations("auth.form");
+  const tErrors = useTranslations("auth.errors");
+
   const [isPending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
   const [serverFieldErrors, setServerFieldErrors] = useState<{
@@ -38,6 +48,22 @@ export function AuthForm({ mode, action, className }: AuthFormProps) {
     },
   });
 
+  function mapMessageKey(key?: AuthMessageKey): string | null {
+    if (!key) {
+      return null;
+    }
+
+    return tErrors(key);
+  }
+
+  function mapFieldKey(key?: AuthFieldErrorKey): string | undefined {
+    if (!key) {
+      return undefined;
+    }
+
+    return tErrors(key);
+  }
+
   function onSubmit(values: AuthInput) {
     setFormError(null);
     setServerFieldErrors({});
@@ -45,8 +71,11 @@ export function AuthForm({ mode, action, className }: AuthFormProps) {
     startTransition(async () => {
       const result = await action(values);
       if (!result.success) {
-        setFormError(result.message ?? "Something went wrong.");
-        setServerFieldErrors(result.fieldErrors ?? {});
+        setFormError(mapMessageKey(result.messageKey) ?? result.message ?? tForm("fallbackError"));
+        setServerFieldErrors({
+          email: mapFieldKey(result.fieldErrorKeys?.email) ?? result.fieldErrors?.email,
+          password: mapFieldKey(result.fieldErrorKeys?.password) ?? result.fieldErrors?.password,
+        });
       }
     });
   }
@@ -54,43 +83,45 @@ export function AuthForm({ mode, action, className }: AuthFormProps) {
   return (
     <section
       className={clsx(styles.authForm, className)}
-      aria-label={isSignIn ? "Sign in" : "Sign up"}
+      aria-label={isSignIn ? tForm("signInAriaLabel") : tForm("signUpAriaLabel")}
     >
       <header className={styles.authForm__header}>
-        <h1 className={styles.authForm__title}>{isSignIn ? "Sign in" : "Create account"}</h1>
+        <h1 className={styles.authForm__title}>
+          {isSignIn ? tForm("signInTitle") : tForm("signUpTitle")}
+        </h1>
         <p className={styles.authForm__subtitle}>
-          {isSignIn ? "Welcome back to IMDB Play." : "Start building your watchlist."}
+          {isSignIn ? tForm("signInSubtitle") : tForm("signUpSubtitle")}
         </p>
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.authForm__body} noValidate>
         <Input
           type="email"
-          label="Email"
+          label={tForm("emailLabel")}
           autoComplete="email"
           fullWidth
           error={errors.email?.message ?? serverFieldErrors.email}
           {...register("email", {
-            required: "Email is required",
+            required: tErrors("field.email.required"),
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Please enter a valid email",
+              message: tErrors("field.email.invalid"),
             },
           })}
         />
         <Input
           type="password"
-          label="Password"
+          label={tForm("passwordLabel")}
           autoComplete={isSignIn ? "current-password" : "new-password"}
           fullWidth
           error={errors.password?.message ?? serverFieldErrors.password}
           {...register("password", {
-            required: "Password is required",
+            required: tErrors("field.password.required"),
             minLength: isSignIn
               ? undefined
               : {
                   value: 8,
-                  message: "Password must be at least 8 characters",
+                  message: tErrors("field.password.minLength"),
                 },
           })}
         />
@@ -100,14 +131,14 @@ export function AuthForm({ mode, action, className }: AuthFormProps) {
           </p>
         )}
         <Button type="submit" fullWidth isLoading={isPending}>
-          {isSignIn ? "Sign In" : "Sign Up"}
+          {isSignIn ? tForm("signInButton") : tForm("signUpButton")}
         </Button>
       </form>
 
       <footer className={styles.authForm__footer}>
-        <span>{isSignIn ? "No account yet?" : "Already have an account?"}</span>
+        <span>{isSignIn ? tForm("noAccount") : tForm("hasAccount")}</span>
         <Link href={isSignIn ? "/auth/sign-up" : "/auth/sign-in"}>
-          {isSignIn ? "Create one" : "Sign in"}
+          {isSignIn ? tForm("createOne") : tForm("goToSignIn")}
         </Link>
       </footer>
     </section>

@@ -3,28 +3,41 @@
 import type { AuthActionResult, SignInInput, SignUpInput } from "@/features/auth/types";
 import { signInSchema, signUpSchema } from "@/features/auth/validators";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { createUser, findUserByEmail, verifyUserCredentials } from "./services/auth.service";
 import { hashPassword } from "./services/password.service";
 import { createSession, destroySession } from "./services/session.service";
 
-function mapValidationError(fieldErrors: {
-  email?: string[];
-  password?: string[];
-}): AuthActionResult {
+function mapValidationError(error: z.ZodError<SignInInput | SignUpInput>): AuthActionResult {
+  const fieldErrorKeys: NonNullable<AuthActionResult["fieldErrorKeys"]> = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0];
+
+    if (field === "email" && !fieldErrorKeys.email) {
+      fieldErrorKeys.email = "field.email.invalid";
+    }
+
+    if (field === "password" && !fieldErrorKeys.password) {
+      if (issue.code === "too_small" && issue.minimum === 1) {
+        fieldErrorKeys.password = "field.password.required";
+      } else if (issue.code === "too_small") {
+        fieldErrorKeys.password = "field.password.minLength";
+      }
+    }
+  }
+
   return {
     success: false,
-    message: "Please fix the highlighted fields.",
-    fieldErrors: {
-      email: fieldErrors.email?.[0],
-      password: fieldErrors.password?.[0],
-    },
+    messageKey: "validation.fixFields",
+    fieldErrorKeys,
   };
 }
 
 export async function signUpAction(input: SignUpInput): Promise<AuthActionResult> {
   const parsed = signUpSchema.safeParse(input);
   if (!parsed.success) {
-    return mapValidationError(parsed.error.flatten().fieldErrors);
+    return mapValidationError(parsed.error);
   }
 
   try {
@@ -34,9 +47,9 @@ export async function signUpAction(input: SignUpInput): Promise<AuthActionResult
     if (existingUser) {
       return {
         success: false,
-        message: "An account with this email already exists.",
-        fieldErrors: {
-          email: "Email is already in use.",
+        messageKey: "signUp.duplicateEmail",
+        fieldErrorKeys: {
+          email: "field.email.alreadyInUse",
         },
       };
     }
@@ -51,7 +64,7 @@ export async function signUpAction(input: SignUpInput): Promise<AuthActionResult
   } catch {
     return {
       success: false,
-      message: "Unable to create your account right now.",
+      messageKey: "signUp.createFailed",
     };
   }
 
@@ -61,7 +74,7 @@ export async function signUpAction(input: SignUpInput): Promise<AuthActionResult
 export async function signInAction(input: SignInInput): Promise<AuthActionResult> {
   const parsed = signInSchema.safeParse(input);
   if (!parsed.success) {
-    return mapValidationError(parsed.error.flatten().fieldErrors);
+    return mapValidationError(parsed.error);
   }
 
   try {
@@ -71,7 +84,7 @@ export async function signInAction(input: SignInInput): Promise<AuthActionResult
     if (!user) {
       return {
         success: false,
-        message: "Invalid email or password.",
+        messageKey: "signIn.invalidCredentials",
       };
     }
 
@@ -79,7 +92,7 @@ export async function signInAction(input: SignInInput): Promise<AuthActionResult
   } catch {
     return {
       success: false,
-      message: "Unable to sign you in right now.",
+      messageKey: "signIn.failed",
     };
   }
 
@@ -92,7 +105,7 @@ export async function signOutAction(): Promise<AuthActionResult> {
   } catch {
     return {
       success: false,
-      message: "Unable to sign out right now.",
+      messageKey: "signOut.failed",
     };
   }
 

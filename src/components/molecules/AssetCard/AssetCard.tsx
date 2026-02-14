@@ -2,6 +2,7 @@ import { Icon } from "@/components/atoms/Icon";
 import { Tag } from "@/components/atoms/Tag";
 import { clsx } from "clsx";
 import { Heart, Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import type { KeyboardEventHandler, Ref } from "react";
@@ -46,6 +47,8 @@ export function AssetCard({
   onLinkKeyDown,
   className,
 }: AssetCardProps) {
+  const t = useTranslations("common");
+
   return (
     <article className={clsx(styles.assetCard, className)}>
       <Link
@@ -71,12 +74,12 @@ export function AssetCard({
           <div className={styles.assetCard__badges}>
             {isFavorite && (
               <div className={styles.assetCard__favorite}>
-                <Icon icon={Heart} size="small" ariaLabel="Favorite" />
+                <Icon icon={Heart} size="small" ariaLabel={t("a11y.favorite")} />
               </div>
             )}
             {mediaType && (
               <Tag variant="default" size="small">
-                {mediaType === "movie" ? "Movie" : "Series"}
+                {mediaType === "movie" ? t("mediaType.movie") : t("mediaType.series")}
               </Tag>
             )}
           </div>
@@ -91,7 +94,7 @@ export function AssetCard({
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label="Watch progress"
+                aria-label={t("a11y.watchProgress")}
               />
             </div>
           )}
@@ -102,7 +105,7 @@ export function AssetCard({
           <div className={styles.assetCard__meta}>
             {rating !== undefined && (
               <div className={styles.assetCard__rating}>
-                <Icon icon={Star} size="small" ariaLabel="Rating" />
+                <Icon icon={Star} size="small" ariaLabel={t("a11y.rating")} />
                 <span>{rating.toFixed(1)}</span>
               </div>
             )}
