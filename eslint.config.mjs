@@ -31,6 +31,7 @@ const eslintConfig = defineConfig([
     ".playwright/**",
     ".storybook/**",
     "storybook-static/**",
+    "src/generated/**",
   ]),
 ]);
 

@@ -1,0 +1,72 @@
+.episodeSelector {
+  padding: var(--spacing-2xl) 0;
+  background-color: var(--color-background);
+}
+
+.container {
+  padding: 0 var(--spacing-2xl);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  margin-bottom: var(--spacing-lg);
+}
+
+.loading,
+.error,
+.noEpisodes {
+  padding: var(--spacing-2xl) 0;
+  text-align: center;
+}
+
+.episodeGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+}
+
+.episodeSkeleton {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.error p,
+.noEpisodes p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .episodeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .container {
+    padding: 0 var(--spacing-2xl);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .episodeGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+  .episodeGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+}

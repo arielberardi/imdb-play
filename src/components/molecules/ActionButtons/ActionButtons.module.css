@@ -1,0 +1,41 @@
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.playButton {
+  min-width: 140px;
+}
+
+.iconButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.iconButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.iconButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

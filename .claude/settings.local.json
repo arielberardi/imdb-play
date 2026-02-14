@@ -39,7 +39,11 @@
       "Bash(pnpm build:*)",
       "Bash(pnpm db:generate:*)",
       "Bash(pnpm dev)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm format:fix:*)",
+      "Bash(pnpm format:check:*)",
+      "Bash(pnpm test:ui:*)"
     ]
   }
 }
