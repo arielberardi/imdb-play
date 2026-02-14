@@ -30,6 +30,8 @@ export default function AssetDetailsHero({ details, mediaType, userState }: Asse
               width={300}
               height={450}
               priority
+              sizes="(max-width: 768px) 45vw, 300px"
+              quality={85}
               className={styles.posterImage}
             />
           ) : (

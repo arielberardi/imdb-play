@@ -34,10 +34,10 @@
  *
  * ## Caching Strategy
  *
- * - Catalog data (trending, popular, genres): 1 hour
- * - Search results: 30 minutes
+ * - Catalog data (trending, popular, genres): 6 hours
+ * - Search results: 15 minutes
  * - Detail pages: 1 hour
- * - Trailers: 2 hours
+ * - Trailers: 1 hour
  *
  * @module @/lib/imdb
  */
@@ -56,6 +56,7 @@ export type {
 } from "./types";
 
 // Export errors
+export { isImdbNotFoundError, toUserSafeError } from "./error-handling";
 export {
   ImdbApiError,
   ImdbHttpError,

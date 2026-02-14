@@ -1,0 +1,48 @@
+.castSkeleton {
+  padding: var(--spacing-2xl);
+}
+
+.castSkeletonTitle {
+  margin-bottom: var(--spacing-lg);
+}
+
+.castSkeletonList {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: hidden;
+}
+
+.castSkeletonItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.episodeSkeleton {
+  padding: var(--spacing-2xl);
+}
+
+.episodeSkeletonTitle {
+  margin-bottom: var(--spacing-lg);
+}
+
+.episodeSkeletonTabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.episodeSkeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.episodeSkeletonCardImage {
+  margin-bottom: var(--spacing-sm);
+}
+
+.episodeSkeletonCardTitle {
+  margin-bottom: var(--spacing-xs);
+}

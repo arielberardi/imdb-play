@@ -2,10 +2,13 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import { getTitleDetails, MediaType } from "@/lib/imdb";
+import { isImdbNotFoundError, toUserSafeError } from "@/lib/imdb/error-handling";
+import logger from "@/lib/logger";
 import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import styles from "./page.module.css";
 
 interface MovieDetailPageProps {
   params: Promise<{ id: string }>;
@@ -16,13 +19,6 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
 
   try {
     const details = await getTitleDetails(id, MediaType.MOVIE);
-
-    if (!details) {
-      return {
-        title: "Movie Not Found - IMDb Play",
-      };
-    }
-
     const year = details.releaseDate ? new Date(details.releaseDate).getFullYear() : "";
     const backdropUrl = details.backdropPath
       ? `https://image.tmdb.org/t/p/original${details.backdropPath}`
@@ -37,24 +33,43 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
         images: backdropUrl ? [backdropUrl] : [],
       },
     };
-  } catch {
+  } catch (error) {
+    if (isImdbNotFoundError(error)) {
+      return {
+        title: "Movie Not Found - IMDb Play",
+      };
+    }
+
     return {
-      title: "Movie Not Found - IMDb Play",
+      title: "Movie Temporarily Unavailable - IMDb Play",
     };
   }
 }
 
 export default async function MovieDetailPage({ params }: MovieDetailPageProps) {
   const { id } = await params;
+  let details;
 
-  const [details, userState] = await Promise.all([
-    getTitleDetails(id, MediaType.MOVIE),
-    getUserTitleState(id),
-  ]);
+  try {
+    details = await getTitleDetails(id, MediaType.MOVIE);
+  } catch (error) {
+    if (isImdbNotFoundError(error)) {
+      notFound();
+    }
 
-  if (!details) {
-    notFound();
+    logger.error(
+      {
+        route: "/movies/[id]",
+        imdbId: id,
+        mediaType: MediaType.MOVIE,
+        error,
+      },
+      "Failed to load movie details",
+    );
+    throw toUserSafeError(error);
   }
+
+  const userState = await getUserTitleState(id);
 
   return (
     <main>
@@ -71,19 +86,11 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
 
 function CastListSkeleton() {
   return (
-    <div style={{ padding: "var(--spacing-2xl)" }}>
-      <Skeleton width="150px" height="24px" style={{ marginBottom: "var(--spacing-lg)" }} />
-      <div style={{ display: "flex", gap: "var(--spacing-md)", overflowX: "hidden" }}>
+    <div className={styles.castSkeleton}>
+      <Skeleton width="150px" height="24px" className={styles.castSkeletonTitle} />
+      <div className={styles.castSkeletonList}>
         {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "var(--spacing-sm)",
-            }}
-          >
+          <div key={i} className={styles.castSkeletonItem}>
             <Skeleton width="150px" height="150px" variant="circular" />
             <Skeleton width="120px" height="16px" />
             <Skeleton width="100px" height="14px" />

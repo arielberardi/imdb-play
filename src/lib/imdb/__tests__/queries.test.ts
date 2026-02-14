@@ -63,7 +63,7 @@ describe("queries", () => {
       const titles = await getTrending("movie", "week");
 
       expect(apiFetch).toHaveBeenCalledWith("/trending/movie/week", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(titles).toHaveLength(1);
       expect(titles[0].id).toBe("550");
@@ -133,7 +133,7 @@ describe("queries", () => {
       const response = await getPopularMovies(1);
 
       expect(apiFetch).toHaveBeenCalledWith("/movie/popular?page=1", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(response.results).toHaveLength(1);
       expect(response.page).toBe(1);
@@ -182,7 +182,7 @@ describe("queries", () => {
       const response = await getPopularSeries(2);
 
       expect(apiFetch).toHaveBeenCalledWith("/tv/popular?page=2", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(response.results).toHaveLength(1);
       expect(response.results[0].mediaType).toBe(MediaType.SERIES);
@@ -207,7 +207,7 @@ describe("queries", () => {
       const response = await getByGenre(MediaType.MOVIE, 18, 1);
 
       expect(apiFetch).toHaveBeenCalledWith("/discover/movie?with_genres=18&page=1", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(response.results).toHaveLength(1);
       expect(response.results[0].mediaType).toBe(MediaType.MOVIE);
@@ -229,7 +229,7 @@ describe("queries", () => {
       const response = await getByGenre(MediaType.SERIES, 80);
 
       expect(apiFetch).toHaveBeenCalledWith("/discover/tv?with_genres=80&page=1", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(response.results).toHaveLength(1);
       expect(response.results[0].mediaType).toBe(MediaType.SERIES);
@@ -287,7 +287,7 @@ describe("queries", () => {
       const response = await searchTitles("test query", 1);
 
       expect(apiFetch).toHaveBeenCalledWith("/search/multi?query=test%20query&page=1", {
-        revalidate: 1800,
+        revalidate: 900,
       });
       expect(response.results).toHaveLength(2); // Person filtered out
       expect(response.results[0].mediaType).toBe(MediaType.MOVIE);
@@ -423,7 +423,7 @@ describe("queries", () => {
       const trailers = await getTitleTrailers("550", MediaType.MOVIE);
 
       expect(apiFetch).toHaveBeenCalledWith("/movie/550/videos", {
-        revalidate: 7200,
+        revalidate: 3600,
       });
       expect(trailers.every((t) => t.site === "YouTube")).toBe(true);
       expect(trailers.length).toBeLessThan(tmdbVideosFixture.results.length); // Vimeo filtered
@@ -486,7 +486,7 @@ describe("queries", () => {
       const genres = await getGenreList(MediaType.MOVIE);
 
       expect(apiFetch).toHaveBeenCalledWith("/genre/movie/list", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(genres).toHaveLength(2);
       expect(genres[0].name).toBe("Action");
@@ -505,7 +505,7 @@ describe("queries", () => {
       const genres = await getGenreList(MediaType.SERIES);
 
       expect(apiFetch).toHaveBeenCalledWith("/genre/tv/list", {
-        revalidate: 3600,
+        revalidate: 21600,
       });
       expect(genres).toHaveLength(1);
     });

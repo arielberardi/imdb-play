@@ -3,10 +3,13 @@ import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import EpisodeSelector from "@/components/organisms/EpisodeSelector";
 import { getTitleDetails, MediaType } from "@/lib/imdb";
+import { isImdbNotFoundError, toUserSafeError } from "@/lib/imdb/error-handling";
+import logger from "@/lib/logger";
 import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import styles from "./page.module.css";
 
 interface SeriesDetailPageProps {
   params: Promise<{ id: string }>;
@@ -17,13 +20,6 @@ export async function generateMetadata({ params }: SeriesDetailPageProps): Promi
 
   try {
     const details = await getTitleDetails(id, MediaType.SERIES);
-
-    if (!details) {
-      return {
-        title: "Series Not Found - IMDb Play",
-      };
-    }
-
     const year = details.releaseDate ? new Date(details.releaseDate).getFullYear() : "";
     const backdropUrl = details.backdropPath
       ? `https://image.tmdb.org/t/p/original${details.backdropPath}`
@@ -38,24 +34,43 @@ export async function generateMetadata({ params }: SeriesDetailPageProps): Promi
         images: backdropUrl ? [backdropUrl] : [],
       },
     };
-  } catch {
+  } catch (error) {
+    if (isImdbNotFoundError(error)) {
+      return {
+        title: "Series Not Found - IMDb Play",
+      };
+    }
+
     return {
-      title: "Series Not Found - IMDb Play",
+      title: "Series Temporarily Unavailable - IMDb Play",
     };
   }
 }
 
 export default async function SeriesDetailPage({ params }: SeriesDetailPageProps) {
   const { id } = await params;
+  let details;
 
-  const [details, userState] = await Promise.all([
-    getTitleDetails(id, MediaType.SERIES),
-    getUserTitleState(id),
-  ]);
+  try {
+    details = await getTitleDetails(id, MediaType.SERIES);
+  } catch (error) {
+    if (isImdbNotFoundError(error)) {
+      notFound();
+    }
 
-  if (!details) {
-    notFound();
+    logger.error(
+      {
+        route: "/series/[id]",
+        imdbId: id,
+        mediaType: MediaType.SERIES,
+        error,
+      },
+      "Failed to load series details",
+    );
+    throw toUserSafeError(error);
   }
+
+  const userState = await getUserTitleState(id);
 
   return (
     <main>
@@ -78,19 +93,11 @@ export default async function SeriesDetailPage({ params }: SeriesDetailPageProps
 
 function CastListSkeleton() {
   return (
-    <div style={{ padding: "var(--spacing-2xl)" }}>
-      <Skeleton width="150px" height="24px" style={{ marginBottom: "var(--spacing-lg)" }} />
-      <div style={{ display: "flex", gap: "var(--spacing-md)", overflowX: "hidden" }}>
+    <div className={styles.castSkeleton}>
+      <Skeleton width="150px" height="24px" className={styles.castSkeletonTitle} />
+      <div className={styles.castSkeletonList}>
         {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "var(--spacing-sm)",
-            }}
-          >
+          <div key={i} className={styles.castSkeletonItem}>
             <Skeleton width="150px" height="150px" variant="circular" />
             <Skeleton width="120px" height="16px" />
             <Skeleton width="100px" height="14px" />
@@ -103,24 +110,18 @@ function CastListSkeleton() {
 
 function EpisodeSelectorSkeleton() {
   return (
-    <div style={{ padding: "var(--spacing-2xl)" }}>
-      <Skeleton width="150px" height="24px" style={{ marginBottom: "var(--spacing-lg)" }} />
-      <div style={{ display: "flex", gap: "var(--spacing-sm)", marginBottom: "var(--spacing-xl)" }}>
+    <div className={styles.episodeSkeleton}>
+      <Skeleton width="150px" height="24px" className={styles.episodeSkeletonTitle} />
+      <div className={styles.episodeSkeletonTabs}>
         {[...Array(5)].map((_, i) => (
           <Skeleton key={i} width="100px" height="40px" />
         ))}
       </div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: "var(--spacing-md)",
-        }}
-      >
+      <div className={styles.episodeSkeletonGrid}>
         {[...Array(10)].map((_, i) => (
           <div key={i}>
-            <Skeleton width="100%" height="180px" style={{ marginBottom: "var(--spacing-sm)" }} />
-            <Skeleton width="60%" height="20px" style={{ marginBottom: "var(--spacing-xs)" }} />
+            <Skeleton width="100%" height="180px" className={styles.episodeSkeletonCardImage} />
+            <Skeleton width="60%" height="20px" className={styles.episodeSkeletonCardTitle} />
             <Skeleton width="100%" height="16px" />
           </div>
         ))}

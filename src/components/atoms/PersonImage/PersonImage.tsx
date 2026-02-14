@@ -38,6 +38,8 @@ export function PersonImage({ profilePath, name, size = 150 }: PersonImageProps)
         alt={name}
         width={size}
         height={size}
+        sizes={`${size}px`}
+        quality={75}
         className={styles.image}
         onError={() => setHasError(true)}
       />
