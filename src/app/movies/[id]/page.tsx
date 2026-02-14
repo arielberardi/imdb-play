@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import { getTitleDetails, MediaType } from "@/lib/imdb";
+import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -46,7 +47,10 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
 export default async function MovieDetailPage({ params }: MovieDetailPageProps) {
   const { id } = await params;
 
-  const details = await getTitleDetails(id, MediaType.MOVIE);
+  const [details, userState] = await Promise.all([
+    getTitleDetails(id, MediaType.MOVIE),
+    getUserTitleState(id),
+  ]);
 
   if (!details) {
     notFound();
@@ -54,7 +58,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
 
   return (
     <main>
-      <AssetDetailsHero details={details} mediaType="movie" />
+      <AssetDetailsHero details={details} mediaType="movie" userState={userState} />
 
       {details.credits.cast.length > 0 && (
         <Suspense fallback={<CastListSkeleton />}>

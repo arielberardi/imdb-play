@@ -3,6 +3,7 @@ import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import EpisodeSelector from "@/components/organisms/EpisodeSelector";
 import { getTitleDetails, MediaType } from "@/lib/imdb";
+import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -47,7 +48,10 @@ export async function generateMetadata({ params }: SeriesDetailPageProps): Promi
 export default async function SeriesDetailPage({ params }: SeriesDetailPageProps) {
   const { id } = await params;
 
-  const details = await getTitleDetails(id, MediaType.SERIES);
+  const [details, userState] = await Promise.all([
+    getTitleDetails(id, MediaType.SERIES),
+    getUserTitleState(id),
+  ]);
 
   if (!details) {
     notFound();
@@ -55,7 +59,7 @@ export default async function SeriesDetailPage({ params }: SeriesDetailPageProps
 
   return (
     <main>
-      <AssetDetailsHero details={details} mediaType="series" />
+      <AssetDetailsHero details={details} mediaType="series" userState={userState} />
 
       {details.seasons && details.seasons.length > 0 && (
         <Suspense fallback={<EpisodeSelectorSkeleton />}>

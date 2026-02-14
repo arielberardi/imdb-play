@@ -24,6 +24,10 @@
   transition: all var(--transition-base);
 }
 
+.iconButton svg {
+  stroke-width: 2px;
+}
+
 .iconButton:hover:not(:disabled) {
   background-color: rgba(255, 255, 255, 0.2);
   border-color: var(--color-primary);
@@ -38,4 +42,14 @@
 .iconButton:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.activeFavorite {
+  color: #ff5b6f;
+  border-color: #ff5b6f;
+}
+
+.activeWatchlist {
+  color: #26c281;
+  border-color: #26c281;
 }

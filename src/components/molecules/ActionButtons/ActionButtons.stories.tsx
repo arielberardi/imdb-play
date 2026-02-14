@@ -36,17 +36,23 @@ const mockTrailers: Trailer[] = [
 export const WithTrailers: Story = {
   args: {
     trailers: mockTrailers,
+    imdbId: "550",
+    mediaType: "movie",
   },
 };
 
 export const WithoutTrailers: Story = {
   args: {
     trailers: [],
+    imdbId: "550",
+    mediaType: "movie",
   },
 };
 
 export const SingleTrailer: Story = {
   args: {
     trailers: [mockTrailers[0]],
+    imdbId: "550",
+    mediaType: "movie",
   },
 };

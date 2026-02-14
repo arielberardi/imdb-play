@@ -2,18 +2,78 @@
 
 import { Button } from "@/components/atoms/Button";
 import TrailerModal from "@/components/organisms/TrailerModal";
+import { addFavoriteAction, removeFavoriteAction } from "@/features/favorites/server-actions";
+import {
+  addToWatchlistAction,
+  removeFromWatchlistAction,
+} from "@/features/watchlist/server-actions";
+import { MediaType } from "@/generated/prisma";
 import { Trailer } from "@/lib/imdb";
-import { useState } from "react";
+import { Check, Heart, Plus } from "lucide-react";
+import { useOptimistic, useState, useTransition } from "react";
 import styles from "./ActionButtons.module.css";
 
 interface ActionButtonsProps {
   trailers: Trailer[];
+  imdbId: string;
+  mediaType: "movie" | "series";
+  initialIsFavorite?: boolean;
+  initialIsInWatchlist?: boolean;
 }
 
-export function ActionButtons({ trailers }: ActionButtonsProps) {
-  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+function toPrismaMediaType(mediaType: "movie" | "series"): MediaType {
+  return mediaType === "movie" ? MediaType.MOVIE : MediaType.SERIES;
+}
 
-  const hasTrailers = trailers && trailers.length > 0;
+export function ActionButtons({
+  trailers,
+  imdbId,
+  mediaType,
+  initialIsFavorite = false,
+  initialIsInWatchlist = false,
+}: ActionButtonsProps) {
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [favoriteState, setFavoriteState] = useOptimistic(initialIsFavorite);
+  const [watchlistState, setWatchlistState] = useOptimistic(initialIsInWatchlist);
+
+  const hasTrailers = trailers.length > 0;
+
+  const onToggleFavorite = () => {
+    startTransition(async () => {
+      const nextFavoriteState = !favoriteState;
+      setFavoriteState(nextFavoriteState);
+
+      const result = nextFavoriteState
+        ? await addFavoriteAction({
+            imdbId,
+            mediaType: toPrismaMediaType(mediaType),
+          })
+        : await removeFavoriteAction(imdbId);
+
+      if (!result.success) {
+        setFavoriteState(!nextFavoriteState);
+      }
+    });
+  };
+
+  const onToggleWatchlist = () => {
+    startTransition(async () => {
+      const nextWatchlistState = !watchlistState;
+      setWatchlistState(nextWatchlistState);
+
+      const result = nextWatchlistState
+        ? await addToWatchlistAction({
+            imdbId,
+            mediaType: toPrismaMediaType(mediaType),
+          })
+        : await removeFromWatchlistAction(imdbId);
+
+      if (!result.success) {
+        setWatchlistState(!nextWatchlistState);
+      }
+    });
+  };
 
   return (
     <div className={styles.actionButtons}>
@@ -22,26 +82,29 @@ export function ActionButtons({ trailers }: ActionButtonsProps) {
         disabled={!hasTrailers}
         className={styles.playButton}
       >
-        {hasTrailers ? "▶ Play Trailer" : "No Trailer Available"}
+        {hasTrailers ? "Play Trailer" : "No Trailer Available"}
       </Button>
 
-      {/* Placeholder buttons for Phase 9 */}
       <button
-        className={styles.iconButton}
-        title="Add to Favorites"
-        disabled
-        aria-label="Add to favorites"
+        type="button"
+        className={`${styles.iconButton} ${favoriteState ? styles.activeFavorite : ""}`}
+        title={favoriteState ? "Remove from Favorites" : "Add to Favorites"}
+        onClick={onToggleFavorite}
+        disabled={isPending}
+        aria-label={favoriteState ? "Remove from favorites" : "Add to favorites"}
       >
-        ♥
+        <Heart size={20} fill={favoriteState ? "currentColor" : "none"} />
       </button>
 
       <button
-        className={styles.iconButton}
-        title="Add to Watchlist"
-        disabled
-        aria-label="Add to watchlist"
+        type="button"
+        className={`${styles.iconButton} ${watchlistState ? styles.activeWatchlist : ""}`}
+        title={watchlistState ? "Remove from Watchlist" : "Add to Watchlist"}
+        onClick={onToggleWatchlist}
+        disabled={isPending}
+        aria-label={watchlistState ? "Remove from watchlist" : "Add to watchlist"}
       >
-        +
+        {watchlistState ? <Check size={20} /> : <Plus size={20} />}
       </button>
 
       {hasTrailers && (
