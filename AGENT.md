@@ -490,3 +490,33 @@ When working on this project:
 This document is the **single source of truth** for development patterns in this repository.
 
 It evolves intentionally, never accidentally.
+
+---
+
+# Logging Convention (MANDATORY)
+
+Use the shared logger in `src/lib/logger.ts` for both backend and frontend runtime code.
+
+## Rules
+
+* Import logger via `import logger from "@/lib/logger"`
+* Use logger levels consistently:
+  * `logger.debug` for verbose diagnostics
+  * `logger.info` for normal lifecycle events
+  * `logger.warn` for recoverable issues
+  * `logger.error` for failures and exceptions
+* Include structured context objects (route, component, ids, payload metadata) when logging errors/warnings.
+* Do not use `console.log`, `console.info`, `console.warn`, or `console.error` in application runtime code.
+* If logging in client components, avoid logging directly in render paths; use effects/event handlers.
+* Existing generated files or third-party code are excluded from this rule.
+
+## Scope
+
+Applies to:
+
+* `src/app/**`
+* `src/features/**`
+* `src/components/**` (runtime components)
+* `src/lib/**`
+
+Storybook examples may keep lightweight local handlers when needed for demos.

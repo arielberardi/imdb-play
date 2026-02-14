@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button";
+import logger from "@/lib/logger";
+import { useEffect } from "react";
 import styles from "../shared-error.module.css";
 
 interface SeriesErrorProps {
@@ -9,7 +11,15 @@ interface SeriesErrorProps {
 }
 
 export default function SeriesError({ error, reset }: SeriesErrorProps) {
-  console.error("Series route error:", error);
+  useEffect(() => {
+    logger.error(
+      {
+        route: "/series",
+        error,
+      },
+      "Series route error",
+    );
+  }, [error]);
 
   return (
     <section className={styles.error} role="alert">

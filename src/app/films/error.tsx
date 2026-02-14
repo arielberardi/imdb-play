@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button";
+import logger from "@/lib/logger";
+import { useEffect } from "react";
 import styles from "../shared-error.module.css";
 
 interface FilmsErrorProps {
@@ -9,7 +11,15 @@ interface FilmsErrorProps {
 }
 
 export default function FilmsError({ error, reset }: FilmsErrorProps) {
-  console.error("Films route error:", error);
+  useEffect(() => {
+    logger.error(
+      {
+        route: "/films",
+        error,
+      },
+      "Films route error",
+    );
+  }, [error]);
 
   return (
     <section className={styles.error} role="alert">

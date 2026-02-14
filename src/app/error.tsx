@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button";
+import logger from "@/lib/logger";
 import { useEffect } from "react";
 import styles from "./error.module.css";
 
@@ -11,7 +12,13 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error("Route error:", error);
+    logger.error(
+      {
+        route: "/",
+        error,
+      },
+      "Route error",
+    );
   }, [error]);
 
   return (

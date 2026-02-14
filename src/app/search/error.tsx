@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button";
+import logger from "@/lib/logger";
+import { useEffect } from "react";
 import styles from "../shared-error.module.css";
 
 interface SearchErrorProps {
@@ -9,7 +11,15 @@ interface SearchErrorProps {
 }
 
 export default function SearchError({ error, reset }: SearchErrorProps) {
-  console.error("Search route error:", error);
+  useEffect(() => {
+    logger.error(
+      {
+        route: "/search",
+        error,
+      },
+      "Search route error",
+    );
+  }, [error]);
 
   return (
     <section className={styles.error} role="alert">

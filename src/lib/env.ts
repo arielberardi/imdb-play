@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import { z } from "zod";
 
 const envSchema = z.object({
@@ -14,12 +15,20 @@ function validateEnv(): Env {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    console.error("❌ Environment validation failed:");
+    logger.error("Environment validation failed");
+
     if (error instanceof z.ZodError) {
-      error.issues.forEach((err) => {
-        console.error(`  - ${err.path.join(".")}: ${err.message}`);
+      error.issues.forEach((issue) => {
+        logger.error(
+          {
+            path: issue.path.join("."),
+            message: issue.message,
+          },
+          "Environment validation issue",
+        );
       });
     }
+
     process.exit(1);
   }
 }

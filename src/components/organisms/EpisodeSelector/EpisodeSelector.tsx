@@ -5,6 +5,7 @@ import { EpisodeGrid } from "@/components/molecules/EpisodeGrid";
 import { SeasonTabs } from "@/components/molecules/SeasonTabs";
 import { getEpisodes } from "@/lib/imdb/queries";
 import type { Episode, Season } from "@/lib/imdb/types";
+import logger from "@/lib/logger";
 import { useEffect, useState } from "react";
 import styles from "./EpisodeSelector.module.css";
 
@@ -35,7 +36,15 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
         const episodesData = await getEpisodes(tvId, selectedSeasonNumber);
         setEpisodes(episodesData);
       } catch (err) {
-        console.error("Failed to fetch episodes:", err);
+        logger.error(
+          {
+            component: "EpisodeSelector",
+            tvId,
+            seasonNumber: selectedSeasonNumber,
+            error: err,
+          },
+          "Failed to fetch episodes",
+        );
         setError("Failed to load episodes. Please try again.");
       } finally {
         setIsLoading(false);

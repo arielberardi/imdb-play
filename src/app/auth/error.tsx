@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button";
+import logger from "@/lib/logger";
+import { useEffect } from "react";
 import styles from "../shared-error.module.css";
 
 interface AuthErrorProps {
@@ -9,7 +11,15 @@ interface AuthErrorProps {
 }
 
 export default function AuthError({ error, reset }: AuthErrorProps) {
-  console.error("Auth route error:", error);
+  useEffect(() => {
+    logger.error(
+      {
+        route: "/auth",
+        error,
+      },
+      "Auth route error",
+    );
+  }, [error]);
 
   return (
     <section className={styles.error} role="alert">
