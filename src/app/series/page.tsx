@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { FilterChips } from "@/components/molecules/FilterChips/FilterChips";
 import { Rail } from "@/components/molecules/Rail/Rail";
 import { MediaType } from "@/generated/prisma";
+import { FocusRegionProvider } from "@/lib/a11y/focus-region";
 import { TV_GENRES } from "@/lib/imdb/constants";
 import { getByGenre, getPopularSeries } from "@/lib/imdb/queries";
 import type { Title } from "@/lib/imdb/types";
@@ -30,16 +31,18 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
   const selectedGenre = params.genre;
 
   return (
-    <main className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>TV Series</h1>
-        <FilterChips genres={TV_GENRES} basePath="/series" />
-      </div>
+    <FocusRegionProvider>
+      <main className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>TV Series</h1>
+          <FilterChips genres={TV_GENRES} basePath="/series" />
+        </div>
 
-      <Suspense fallback={<RailSkeleton />}>
-        <SeriesContent selectedGenre={selectedGenre} />
-      </Suspense>
-    </main>
+        <Suspense fallback={<RailSkeleton />}>
+          <SeriesContent selectedGenre={selectedGenre} />
+        </Suspense>
+      </main>
+    </FocusRegionProvider>
   );
 }
 
@@ -66,7 +69,7 @@ async function SeriesContent({ selectedGenre }: { selectedGenre?: string }) {
 
   return (
     <section className={styles.resultsSection}>
-      <Rail title={title} items={railItems} />
+      <Rail title={title} items={railItems} regionOrder={1} regionId="series-results" />
     </section>
   );
 }

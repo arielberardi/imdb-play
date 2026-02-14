@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { Heart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { KeyboardEventHandler, Ref } from "react";
 import styles from "./AssetCard.module.css";
 
 interface AssetCardProps {
@@ -18,6 +19,11 @@ interface AssetCardProps {
   showProgress?: boolean;
   progressPercent?: number;
   isFavorite?: boolean;
+  linkRef?: Ref<HTMLAnchorElement>;
+  linkTabIndex?: 0 | -1;
+  onLinkFocus?: () => void;
+  onLinkMouseEnter?: () => void;
+  onLinkKeyDown?: KeyboardEventHandler<HTMLAnchorElement>;
   className?: string;
 }
 
@@ -33,11 +39,24 @@ export function AssetCard({
   showProgress = false,
   progressPercent = 0,
   isFavorite = false,
+  linkRef,
+  linkTabIndex,
+  onLinkFocus,
+  onLinkMouseEnter,
+  onLinkKeyDown,
   className,
 }: AssetCardProps) {
   return (
     <article className={clsx(styles.assetCard, className)}>
-      <Link href={href} className={styles.assetCard__link}>
+      <Link
+        href={href}
+        className={styles.assetCard__link}
+        ref={linkRef}
+        tabIndex={linkTabIndex}
+        onFocus={onLinkFocus}
+        onMouseEnter={onLinkMouseEnter}
+        onKeyDown={onLinkKeyDown}
+      >
         <div className={styles.assetCard__imageWrapper}>
           <Image
             src={imageUrl}

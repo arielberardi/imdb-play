@@ -2,6 +2,12 @@
   margin-bottom: var(--spacing-2xl);
 }
 
+.rail:focus-within .rail__title {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
 .rail__title {
   font-size: var(--font-size-2xl);
   font-weight: 700;

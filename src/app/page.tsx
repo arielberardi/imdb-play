@@ -4,6 +4,7 @@ import { getOptionalUser } from "@/features/auth";
 import { listUserFavorites } from "@/features/favorites/services/favorites.service";
 import { listContinueWatching } from "@/features/progress/services/progress.service";
 import { MediaType } from "@/generated/prisma";
+import { FocusRegionProvider } from "@/lib/a11y/focus-region";
 import { getPopularMovies, getPopularSeries, getTrending, type Title } from "@/lib/imdb";
 import { enrichContinueWatching, enrichFavorites } from "@/lib/personalized-content";
 import { Suspense } from "react";
@@ -31,35 +32,37 @@ export default async function Home() {
   const user = await getOptionalUser();
 
   return (
-    <div className={styles.container}>
-      {user && (
-        <>
-          <Suspense fallback={<RailSkeleton />}>
-            <ContinueWatchingRail userId={user.id} />
-          </Suspense>
+    <FocusRegionProvider>
+      <div className={styles.container}>
+        {user && (
+          <>
+            <Suspense fallback={<RailSkeleton />}>
+              <ContinueWatchingRail userId={user.id} />
+            </Suspense>
+            <Suspense fallback={<RailSkeleton />}>
+              <TrendingRail />
+            </Suspense>
+            <Suspense fallback={<RailSkeleton />}>
+              <FavoritesRail userId={user.id} />
+            </Suspense>
+          </>
+        )}
+
+        {!user && (
           <Suspense fallback={<RailSkeleton />}>
             <TrendingRail />
           </Suspense>
-          <Suspense fallback={<RailSkeleton />}>
-            <FavoritesRail userId={user.id} />
-          </Suspense>
-        </>
-      )}
+        )}
 
-      {!user && (
         <Suspense fallback={<RailSkeleton />}>
-          <TrendingRail />
+          <PopularMoviesRail />
         </Suspense>
-      )}
 
-      <Suspense fallback={<RailSkeleton />}>
-        <PopularMoviesRail />
-      </Suspense>
-
-      <Suspense fallback={<RailSkeleton />}>
-        <PopularSeriesRail />
-      </Suspense>
-    </div>
+        <Suspense fallback={<RailSkeleton />}>
+          <PopularSeriesRail />
+        </Suspense>
+      </div>
+    </FocusRegionProvider>
   );
 }
 
@@ -74,7 +77,7 @@ async function ContinueWatchingRail({ userId }: { userId: string }) {
     return null;
   }
 
-  return <Rail title="Continue Watching" items={items} />;
+  return <Rail title="Continue Watching" items={items} regionOrder={1} regionId="home-continue" />;
 }
 
 async function FavoritesRail({ userId }: { userId: string }) {
@@ -88,28 +91,32 @@ async function FavoritesRail({ userId }: { userId: string }) {
     return null;
   }
 
-  return <Rail title="My Favorites" items={items} />;
+  return <Rail title="My Favorites" items={items} regionOrder={3} regionId="home-favorites" />;
 }
 
 async function TrendingRail() {
   const titles = await getTrending("all", "week");
   const items = titles.slice(0, 20).map(mapTitleToRailItem);
 
-  return <Rail title="Trending Now" items={items} />;
+  return <Rail title="Trending Now" items={items} regionOrder={2} regionId="home-trending" />;
 }
 
 async function PopularMoviesRail() {
   const response = await getPopularMovies();
   const items = response.results.slice(0, 20).map(mapTitleToRailItem);
 
-  return <Rail title="Popular Movies" items={items} />;
+  return (
+    <Rail title="Popular Movies" items={items} regionOrder={4} regionId="home-popular-movies" />
+  );
 }
 
 async function PopularSeriesRail() {
   const response = await getPopularSeries();
   const items = response.results.slice(0, 20).map(mapTitleToRailItem);
 
-  return <Rail title="Popular Series" items={items} />;
+  return (
+    <Rail title="Popular Series" items={items} regionOrder={5} regionId="home-popular-series" />
+  );
 }
 
 function RailSkeleton() {

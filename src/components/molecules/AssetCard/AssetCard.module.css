@@ -11,6 +11,12 @@
   display: block;
   text-decoration: none;
   color: inherit;
+  border-radius: var(--radius-md);
+}
+
+.assetCard__link:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
 }
 
 .assetCard__imageWrapper {
