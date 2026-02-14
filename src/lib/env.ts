@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-namespace */
+
 import logger from "@/lib/logger";
 import { z } from "zod";
 
@@ -10,27 +13,34 @@ const envSchema = z.object({
 });
 
 export type Env = z.infer<typeof envSchema>;
+type EnvSchema = z.infer<typeof envSchema>;
 
-function validateEnv(): Env {
-  try {
-    return envSchema.parse(process.env);
-  } catch (error) {
-    logger.error("Environment validation failed");
+export function validateEnv(): void {
+  const result = envSchema.safeParse(process.env);
 
-    if (error instanceof z.ZodError) {
-      error.issues.forEach((issue) => {
-        logger.error(
-          {
-            path: issue.path.join("."),
-            message: issue.message,
-          },
-          "Environment validation issue",
-        );
-      });
-    }
+  if (result.success) {
+    return;
+  }
 
-    process.exit(1);
+  logger.error("Environment validation failed");
+
+  result.error.issues.forEach((issue) => {
+    logger.error(
+      {
+        path: issue.path.join("."),
+        message: issue.message,
+      },
+      "Environment validation issue",
+    );
+  });
+
+  process.exit(1);
+}
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends EnvSchema {}
   }
 }
 
-export const env = validateEnv();
+export {};
