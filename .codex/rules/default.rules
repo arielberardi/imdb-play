@@ -1,0 +1,85 @@
+# Allow common pnpm workflows for Next.js.
+prefix_rule(
+    pattern = ["pnpm", ["install", "i"]],
+    decision = "allow",
+    justification = "Dependency install for Next.js project",
+)
+
+prefix_rule(
+    pattern = ["pnpm", "dev"],
+    decision = "allow",
+    justification = "Run Next.js dev server",
+)
+
+prefix_rule(
+    pattern = ["pnpm", "build"],
+    decision = "allow",
+    justification = "Build Next.js app",
+)
+
+prefix_rule(
+    pattern = ["pnpm", "start"],
+    decision = "allow",
+    justification = "Start Next.js production server",
+)
+
+prefix_rule(
+    pattern = ["pnpm", ["test", "lint", "typecheck"]],
+    decision = "allow",
+    justification = "Standard local checks",
+)
+
+# Vitest (direct or via pnpm script)
+prefix_rule(
+    pattern = ["pnpm", "vitest"],
+    decision = "allow",
+    justification = "Run unit tests (Vitest)",
+)
+
+prefix_rule(
+    pattern = ["vitest"],
+    decision = "allow",
+    justification = "Run unit tests (Vitest)",
+)
+
+# Playwright (direct or via pnpm script)
+prefix_rule(
+    pattern = ["pnpm", "playwright"],
+    decision = "allow",
+    justification = "Run e2e tests (Playwright)",
+)
+
+prefix_rule(
+    pattern = ["playwright", "test"],
+    decision = "allow",
+    justification = "Run e2e tests (Playwright)",
+)
+
+prefix_rule(
+    pattern = ["playwright", "install"],
+    decision = "allow",
+    justification = "Install Playwright browsers (needed for e2e)",
+)
+
+# GitHub CLI: allow safe read/write of repo + PR workflows
+prefix_rule(
+    pattern = ["gh", ["repo", "pr", "issue"], ["view", "list", "status", "create", "checkout", "edit", "comment"]],
+    decision = "allow",
+    justification = "Common GitHub CLI workflows",
+)
+
+# ---- PROMPT (risky / too powerful) ----
+
+# pnpm exec/dlx can run arbitrary binaries (often fine, but should be reviewed).
+prefix_rule(
+    pattern = ["pnpm", ["exec", "dlx"]],
+    decision = "prompt",
+    justification = "Can execute arbitrary packages/binaries; review before running",
+)
+
+# gh auth can touch credentials/tokens.
+prefix_rule(
+    pattern = ["gh", "auth"],
+    decision = "prompt",
+    justification = "Credential-related command; require approval",
+)
