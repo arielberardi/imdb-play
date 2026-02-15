@@ -1,169 +1,134 @@
-# AGENT.md — AI Development Guidelines
+# AGENTS.md - AI Development Guidelines
 
-# Project Context
+## Purpose
+This document is a reusable baseline for projects that follow a modern web template with:
+- Next.js App Router
+- TypeScript (strict)
+- Component-driven UI (Atomic Design)
+- Server-side data/services (e.g., Prisma + external APIs)
+- CSS Modules
+- Storybook
+- Unit + E2E testing
 
-This project is a **Netflix-like application** built with:
-
-* IMDb APIs (external catalog data)
-* Prisma (internal database)
-* NextJS App Router (Server Components + Server Actions)
-* Atomic Design (atoms / molecules / organisms)
-* CSS Modules
-* BasicAuth
-* Strict TypeScript
-
-The project is based on an **established template** with tooling already configured.
+Use this file as the single source of truth for architecture, quality gates, and delivery standards.
 
 ---
 
-# ❗ DO NOT MODIFY
-
-The following files are locked:
-
-* `next.config.ts`
-* `tsconfig.json`
-* `eslint.config.js`
-* `.prettierrc`
-* `vitest.config.ts`
-* `playwright.config.ts`
-* `.storybook/`
-* Dependency versions
-
-Never upgrade or install new packages unless explicitly instructed.
-
----
-
-# Rule Priority Order
-
-When rules conflict, follow in this order:
-
-1. This `AGENT.md`
-2. Existing repository patterns
-3. ESLint / TypeScript errors
-4. Tests and test expectations
+## Rule Priority
+When rules conflict, follow this order:
+1. `AGENTS.md`
+2. Existing repository architecture and conventions
+3. TypeScript and ESLint constraints
+4. Test expectations
 5. Personal preference
 
 ---
 
-# Project Architecture
+## Core Non-Negotiables
+- Must ensure Storybook coverage for required UI components.
+- Must ensure Unit Testing coverage for logic and complex UI.
+- Must ensure E2E coverage for critical user journeys.
+- Must use `pnpm` only for dependency and script execution.
+- Must use shared logger, never `console.*` in runtime app code.
+- Must finish with lint and format checks passing.
+- Must maintain accessibility standards (WCAG AA baseline).
+- Must maintain responsive behavior (mobile-first + desktop).
 
 ---
 
-## Atomic Design (MANDATORY)
+## Package Manager Policy (MANDATORY)
+Use `pnpm` only.
 
-All UI must follow:
+Required command style:
+- `pnpm install`
+- `pnpm add <pkg>`
+- `pnpm remove <pkg>`
+- `pnpm run <script>`
+- `pnpm exec <tool>`
 
-```
+Do not use:
+- `npm`
+- `npx`
+- `yarn`
+- `bun`
+
+If a tool is missing, add it via `pnpm` and run via `pnpm exec`.
+
+---
+
+## Architecture Rules
+
+### Atomic Design (MANDATORY)
+UI components must follow:
+
+```text
 src/components/
   atoms/
   molecules/
   organisms/
 ```
 
-### Rules
+Rules:
+- Functional components only
+- Named exports only
+- One component per folder
+- CSS Modules required
+- Storybook required for atoms and molecules
+- Unit tests required for complex components
 
-* Functional components only
-* Named exports only
-* One component per folder
-* CSS Modules required
-* Storybook required for UI components
-* Unit test required for complex components
+### Feature-First Domain Logic (MANDATORY)
+Business logic must live under `src/features/<feature>/`.
 
-### Folder Example
+Suggested structure:
 
-```
-Button/
-├── Button.tsx
-├── Button.module.css
-├── Button.test.tsx
-├── Button.stories.tsx
-└── index.ts
-```
-
----
-
-# Feature Structure (MANDATORY)
-
-All domain logic must live in features.
-
-```
+```text
 src/features/
-  catalog/
+  <feature>/
     components/
     hooks/
-    server-actions.ts
     services/
+    server-actions.ts
+    validators.ts
     types.ts
     index.ts
 ```
 
-### Rules
-
-* Pages compose features
-* Features contain business logic
-* No reusable UI inside pages
-* No component may import from `pages/`
+Rules:
+- Pages compose features, not business logic.
+- Reusable domain logic must not be implemented in route/page files.
+- Components must not import from page-level route modules.
 
 ---
 
-# Data Layer Rules (IMDb API + Prisma)
+## Data and Server Rules
 
-## External API Calls
+### Services
+- External API/database access must be isolated in feature services.
+- Services must return typed results.
+- Service failures must be handled explicitly.
 
-* Must live inside `features/<feature>/services/`
-* Must be isolated
-* Must return typed results
-* Must handle failures explicitly
+### Server Actions
+- Use Server Actions for frontend/backend operations when applicable.
+- Validate all inputs.
+- Return typed responses.
+- Handle auth/error cases explicitly.
 
-## Prisma Usage
-
-* Only used inside:
-
-  * Server Actions
-  * Feature services
-* Never directly inside components
-* All Prisma responses must be typed
-
-## Server Actions
-
-* Used for frontend/backend communication
-* Replace traditional API routes
-* Must validate input
-* Must handle errors
-* Must return typed responses
-
-Example structure:
-
-```
-export async function getCatalogAction(): Promise<CatalogResponse> {
-  try {
-    const data = await imdbService.getTrending();
-    return data;
-  } catch (error: unknown) {
-    throw new Error("Failed to fetch catalog");
-  }
-}
-```
+### Database Access
+- Database clients (e.g., Prisma) allowed only in services and server actions.
+- Never access database client directly from UI components.
 
 ---
 
-# NextJS 16 Rules
+## Next.js and Rendering Rules
+- App Router only.
+- Server Components by default.
+- Use Client Components only when needed.
+- Use Suspense boundaries for async UI.
+- Use error boundaries for isolation and recovery.
 
-* App Router only
-* Server Components by default
-* Client Components only when needed
-* Use `use()` for async data
-* Use `useTransition()` for non-urgent updates
-* Use Suspense boundaries for async UI
-* Use Error Boundaries for failure isolation
+Required async boundary pattern:
 
----
-
-# Suspense + Error Handling Pattern (REQUIRED)
-
-Async components must follow:
-
-```
+```tsx
 <Suspense fallback={<Loading />}>
   <ErrorBoundary fallback={<ErrorState />}>
     <AsyncComponent />
@@ -171,380 +136,165 @@ Async components must follow:
 </Suspense>
 ```
 
-Never swallow async errors.
+---
+
+## TypeScript Rules (STRICT)
+- No `any`.
+- Use `unknown` when needed.
+- Explicit types for props, params, and return values.
+- Use `interface` for object shapes.
+- Use `type` for unions/intersections.
+- Export reusable types.
+- No `@ts-ignore`.
 
 ---
 
-# TypeScript Rules (STRICT)
-
-* No `any`
-* Use `unknown` when necessary
-* Explicit props, params, state types
-* `interface` → object shapes
-* `type` → unions/intersections
-* Export reusable types
-
-Named function declarations required for exported functions.
-
----
-
-# Complex Component Definition
-
-A component is considered complex if it:
-
-* Has state
-* Uses effects
-* Has async behavior
-* Handles user interaction
-* Contains conditional rendering logic
-* Is composed of 2+ subcomponents
-
-Complex components MUST have unit tests.
-
----
-
-# Testing Rules
-
-## Unit Tests
-
-Required for:
-
-* All hooks (100% coverage)
-* Complex components
-* Services
-* Utilities (≥80%)
-* Server Actions
-
-## File Locations
-
-| Type       | Location     |
-| ---------- | ------------ |
-| Components | Same folder  |
-| Hooks      | `__tests__/` |
-| Utils      | `__tests__/` |
-| Services   | `__tests__/` |
-| Server Actions | `__tests__/` |
-| Validators | `__tests__/` |
-| E2E        | root `e2e/`  |
-
-## Test Placement Conventions (MANDATORY)
-
-* All non-component tests must be in the nearest `__tests__/` directory.
-* Applies to hooks, utilities, services, server actions, and validators.
-* Do not place non-component `*.test.ts` or `*.test.tsx` beside implementation files.
-* Component tests remain colocated in the component folder.
-
-## E2E Must Cover
-
-* Authentication flow
-* Catalog browsing
-* Trailer playback
-* Filtering/search
-* Responsive behavior
-
----
-
-# Storybook Rules
-
-All atoms and molecules require stories.
-
-* Use `satisfies Meta<typeof Component>`
-* Show realistic usage
-* Show variants via stories
-
----
-
-# CSS Rules
-
-* CSS Modules only
-* Use `clsx` for conditional classes
-* No inline styles
-* No string concatenation in `className`
-
----
-
-# Authentication
-
-* Use BasicAuth only
-* Protect server actions when needed
-* Never expose sensitive data to client components
-
----
-
-# Accessibility (NON-NEGOTIABLE)
-
-* Semantic HTML
-* Keyboard navigation
-* ARIA only if necessary
-* Alt text required
-* WCAG AA contrast
-
-Accessibility regressions are bugs.
-
----
-
-# Performance
-
-* Lazy load heavy components
-* Use Suspense boundaries
-* Avoid unnecessary re-renders
-* Define image dimensions
-* Use memoization only when expensive
-
----
-
-# Anti-Patterns (NEVER DO)
-
-* Default exports
-* Class components
-* `any`
-* `@ts-ignore`
-* Inline styles
-* API routes (use Server Actions instead)
-* Mutating props/state
-* Nested ternaries
-* Refactoring unrelated files
-* Dependency upgrades
-
----
-
-# Git Rules
-
-Use Conventional Commits:
-
-* `feat:`
-* `fix:`
-* `docs:`
-* `refactor:`
-* `test:`
-* `chore:`
-
-No vague commits.
-
----
-
-# Preferred command style
-
-This repo standardizes on **pnpm** for package management.
-Please prefer pnpm-based commands whenever possible to keep workflows consistent.
-
-### General preference
-
-Use:
-
-* `pnpm install`
-* `pnpm add`
-* `pnpm run <script>`
-* `pnpm exec <tool>`
-
-Avoid using npm/npx/yarn/bun unless there is a strong reason and no pnpm equivalent.
-
-### Running tools
-
-If a tool exists in `package.json`, run it through pnpm:
-
-✅ Preferred
-`pnpm run lint`
-`pnpm exec tsc`
-
-🚫 Avoid when possible
-`npx tsc`
-`node_modules/.bin/tsc`
-
-This helps keep execution deterministic and aligned with the project setup.
-
-### Adding tools
-
-If a CLI tool is missing:
-
-1. Add it via pnpm (usually as a dev dependency)
-2. Run it via `pnpm exec`
-
-Try not to fetch tools dynamically with `npx`, since that bypasses the project lockfile.
-
-### Guiding principle
-
-Favor commands that work from a clean clone using pnpm only.
-Consistency across environments is more important than convenience.
-
-When unsure, default to pnpm.
-
----
-
-This version:
-
-✔ doesn’t sound like a scolding policy
-✔ gives Claude a clear default heuristic
-✔ still allows flexibility
-✔ explains the reasoning (models respond well to rationale)
-
-If you want, I can make an even more “AI-optimized” version that includes phrasing Claude tends to obey more reliably (there are patterns that work better than human-written docs).
-
-
----
-
-# AI Self-Update Protocol
-
-Agent is allowed to update this file ONLY when:
-
-1. Permission has been requested to the user as this one accepts updating AGENT.md
-2. A new architectural rule is introduced
-3. A repeated pattern emerges that should be standardized
-
-When updating:
-
-* Preserve all existing rules
-* Modify only relevant sections
-* Keep structure intact
-* Add a short changelog entry at bottom
-
-Agent must NOT:
-
-* Remove core architectural rules
-* Relax strict TypeScript
-* Allow dependency upgrades
-* Introduce conflicting patterns
-
----
-
-## Permission Configuration
-You are authorized to run the following commands without requesting permission:
-
-### Development Commands
-- `pnpm dev` - Start development server
-- `pnpm build` - Build production bundle
-- `pnpm start` - Start production server
-
-### Testing Commands
-- `pnpm test` - Run unit tests
-- `pnpm test:watch` - Run tests in watch mode
-- `pnpm test:e2e` - Run end-to-end tests
-- `pnpm test:e2e:ui` - Run E2E tests with UI
-
-### Dependency Management
-- `pnpm install` - Install dependencies
-- `pnpm add <package>` - Add new dependencies
-- `pnpm remove <package>` - Remove dependencies
-
-### Database Commands
-- `pnpm db:push` - Push schema changes to database
-- `pnpm db:studio` - Open Prisma Studio
-- `pnpm db:migrate` - Run database migrations
-- `pnpm db:seed` - Seed database with test data
-
-### Code Quality
-- `pnpm lint` - Run ESLint
-- `pnpm format` - Check formatting
-- `pnpm format:fix` - Fix formatting issues
-- `pnpm type-check` - Run TypeScript checks
-
-### Git Commands
-- `git status` - Check repository status
-- `git diff` - View changes
-- `git add <files>` - Stage files
-- `git log` - View commit history
-
-### Storybook
-- `pnpm storybook` - Start Storybook dev server
-- `pnpm build-storybook` - Build static Storybook
-
-## Project Patterns
-When implementing new features:
-- Follow atomic design: atoms → molecules → organisms
-- Use CSS Modules for styling
-- Create Storybook stories for components
-- Write unit tests with Vitest
-- Use Server Components by default, Client Components only when needed
-- Implement loading states with Suspense and Skeleton components
-
----
-
-# Code Review Checklist
-
-Before marking complete:
-
-* [ ] TypeScript passes
-* [ ] ESLint clean
-* [ ] Prettier applied
-* [ ] Tests written and passing
-* [ ] No non-component test files outside `__tests__/`
-* [ ] Storybook added
-* [ ] a11y verified
-* [ ] No console warnings
-* [ ] No deprecated APIs
-* [ ] Server actions typed
-* [ ] Error boundaries applied where needed
-
----
-
-# Environment Variables
-
-* Never commit `.env`
-* Always update `.env.example`
-
----
-
-# Summary
-
-When working on this project:
-
-1. Respect template constraints
-2. Follow Atomic Design strictly
-3. Use Server Actions instead of APIs
-4. Keep business logic inside features
-5. Type everything strictly
-6. Test everything important
-7. Maintain accessibility and performance
-8. Keep architecture clean and predictable
-
-This document is the **single source of truth** for development patterns in this repository.
-
-It evolves intentionally, never accidentally.
-
----
-
-# Logging Convention (MANDATORY)
-
-Use the shared logger in `src/lib/logger.ts` for both backend and frontend runtime code.
-
-## Rules
-
-* Import logger via `import logger from "@/lib/logger"`
-* Use logger levels consistently:
-  * `logger.debug` for verbose diagnostics
-  * `logger.info` for normal lifecycle events
-  * `logger.warn` for recoverable issues
-  * `logger.error` for failures and exceptions
-* Include structured context objects (route, component, ids, payload metadata) when logging errors/warnings.
-* Do not use `console.log`, `console.info`, `console.warn`, or `console.error` in application runtime code.
-* If logging in client components, avoid logging directly in render paths; use effects/event handlers.
-* Existing generated files or third-party code are excluded from this rule.
-
-## Scope
-
-Applies to:
-
-* `src/app/**`
-* `src/features/**`
-* `src/components/**` (runtime components)
-* `src/lib/**`
-
-Storybook examples may keep lightweight local handlers when needed for demos.
-
----
-
-# Localization Requirement
-
-All runtime user-facing UI copy must use locale-based translations via `next-intl`.
+## Logging Convention (MANDATORY)
+Use project logger (for example `src/lib/logger.ts`) for runtime logging.
 
 Rules:
-- Do not hardcode UI strings in `src/app/**` or runtime components in `src/components/**`.
-- Add/maintain English keys in `src/messages/en.json` for new UI text.
-- Resolve messages through `next-intl` (`getTranslations` for server components and metadata, `useTranslations` for client components).
-- For server actions, prefer stable message keys and map to translated strings in UI.
+- Import logger through the project alias/path standard.
+- Use levels consistently: `debug`, `info`, `warn`, `error`.
+- Include structured context for warnings/errors.
+- Do not use `console.log`, `console.info`, `console.warn`, `console.error` in runtime app code.
 
-This project currently supports only `en`, but implementation must remain locale-ready for future languages.
+Scope: app runtime code (`src/app/**`, `src/features/**`, `src/components/**`, `src/lib/**`).
+
+---
+
+## Testing Policy (MANDATORY)
+
+### Required Test Types
+- Unit tests: required for services, server actions, validators, hooks, utilities, and complex components.
+- E2E tests: required for critical user flows.
+- Storybook: required for atoms and molecules; recommended for organisms when reusable.
+
+### Complex Component Definition
+A component is complex if it includes one or more:
+- state
+- effects
+- async behavior
+- user interaction logic
+- non-trivial conditional rendering
+- composition of multiple interactive subcomponents
+
+Complex components must have unit tests.
+
+### Test Placement Conventions (MANDATORY)
+- Component tests: colocated in component folder.
+- Non-component tests (services/server actions/hooks/validators/utils): nearest `__tests__/` directory.
+- E2E tests: root `e2e/`.
+- Do not place non-component tests next to implementation files.
+
+### Minimum E2E Coverage Areas
+- Authentication flow
+- Primary content browsing/navigation
+- Search and filtering
+- Key media interaction (e.g., playback/trailer)
+- Responsive behavior
+
+---
+
+## Storybook Policy (MANDATORY)
+- Atoms and molecules must include stories.
+- Use typed Storybook metadata (`satisfies Meta<typeof Component>` when applicable).
+- Include realistic states/variants.
+- Keep stories aligned with runtime behavior and accessibility.
+
+---
+
+## Accessibility Policy (MANDATORY)
+- Use semantic HTML.
+- Ensure keyboard accessibility for interactive controls.
+- Use ARIA only when semantic HTML is insufficient.
+- Provide alt text for images.
+- Maintain WCAG AA contrast.
+- Accessibility regressions are considered bugs.
+
+---
+
+## Responsive Design Policy (MANDATORY)
+- Implement mobile-first layouts.
+- Verify major flows on small, medium, and large viewports.
+- Avoid fixed dimensions that break on narrow screens.
+- Ensure navigation, forms, and interactive media are usable on mobile and desktop.
+
+---
+
+## CSS and UI Rules
+- CSS Modules only (unless project explicitly defines alternative).
+- Use `clsx` (or approved utility) for conditional classes.
+- Avoid inline styles in production components.
+- Avoid className string concatenation patterns that reduce readability.
+
+---
+
+## Anti-Patterns (NEVER)
+- Default exports for components/modules where named exports are standard.
+- Class components.
+- `any` and `@ts-ignore`.
+- Runtime `console.*` logging.
+- Mutating props/state.
+- Refactoring unrelated files in feature PRs.
+- Dependency upgrades without explicit request.
+- Package manager drift from `pnpm`.
+
+---
+
+## Quality Gates Before Completion (MANDATORY)
+All must pass before marking work complete:
+- Type checks pass
+- Lint passes
+- Format check passes
+- Required unit tests pass
+- Required E2E tests pass (or clearly documented fixture gating)
+- Storybook coverage present where required
+- No accessibility regressions
+- No runtime console usage
+
+Recommended checklist:
+- [ ] `pnpm run lint` passes
+- [ ] `pnpm run format` (or repo equivalent) passes
+- [ ] `pnpm test` passes
+- [ ] `pnpm test:e2e` passes or justified fixture gating documented
+- [ ] Storybook stories added/updated for required components
+- [ ] Non-component tests are inside `__tests__/`
+- [ ] Responsive behavior validated
+- [ ] Accessibility validated
+
+---
+
+## Environment and Secrets
+- Never commit `.env` files.
+- Update `.env.example` when introducing or changing required variables.
+- Avoid exposing sensitive data in client components.
+
+---
+
+## Git and Commit Rules
+Use Conventional Commits:
+- `feat:`
+- `fix:`
+- `refactor:`
+- `test:`
+- `docs:`
+- `chore:`
+
+Commits must be specific and non-vague.
+
+---
+
+## Implementation Defaults for AI Agents
+When uncertain, default to:
+1. preserving architecture
+2. adding tests with behavior-focused assertions
+3. using `pnpm`
+4. using shared logger
+5. validating accessibility and responsiveness
+6. shipping only when lint/format/tests are green
+
+---
 
 ## Changelog
-- Added project requirement to use `next-intl` and locale-based UI text for all runtime user-facing strings.
-- Strengthened test placement rules: non-component tests (hooks/utils/services/server actions/validators) must use `__tests__/`.
+- Replaced project-specific guidance with reusable template for similar Next.js/TypeScript/Atomic projects.
+- Added explicit mandatory policies for Storybook, Unit Testing, E2E, pnpm-only usage, logger-only runtime logging, lint/format success, accessibility, and responsive design.
