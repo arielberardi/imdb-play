@@ -1,7 +1,7 @@
 "use client";
 
 import { YouTubeEmbed } from "@/components/molecules/YouTubeEmbed";
-import { Trailer } from "@/lib/imdb";
+import type { Trailer } from "@/features/catalog";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";

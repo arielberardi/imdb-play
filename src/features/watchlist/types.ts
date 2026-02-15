@@ -1,14 +1,14 @@
 import type { MediaType } from "@/generated/prisma";
 
 export interface AddToWatchlistInput {
-  imdbId: string;
+  titleId: string;
   mediaType: MediaType;
 }
 
 export interface WatchlistItem {
   id: string;
   userId: string;
-  imdbId: string;
+  titleId: string;
   mediaType: MediaType;
   createdAt: Date;
 }

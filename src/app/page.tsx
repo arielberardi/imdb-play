@@ -1,11 +1,16 @@
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Rail, type RailItem } from "@/components/molecules/Rail/Rail";
 import { getOptionalUser } from "@/features/auth";
+import {
+  getPopularMoviesAction,
+  getPopularSeriesAction,
+  getTrendingTitlesAction,
+  type Title,
+} from "@/features/catalog";
 import { listUserFavorites } from "@/features/favorites/services/favorites.service";
 import { listContinueWatching } from "@/features/progress/services/progress.service";
 import { MediaType } from "@/generated/prisma";
 import { FocusRegionProvider } from "@/lib/a11y/focus-region";
-import { getPopularMovies, getPopularSeries, getTrending, type Title } from "@/lib/imdb";
 import { enrichContinueWatching, enrichFavorites } from "@/lib/personalized-content";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -15,13 +20,19 @@ export const revalidate = 3600;
 
 const FALLBACK_POSTER = "https://placehold.co/200x300/1f1f1f/a3a3a3?text=No+Image";
 
+function toImageUrl(path: string | null): string {
+  if (!path) {
+    return FALLBACK_POSTER;
+  }
+
+  return path.startsWith("http") ? path : `https://image.tmdb.org/t/p/w500${path}`;
+}
+
 function mapTitleToRailItem(title: Title): RailItem {
   return {
     id: title.id,
     title: title.title,
-    imageUrl: title.posterPath
-      ? `https://image.tmdb.org/t/p/w500${title.posterPath}`
-      : FALLBACK_POSTER,
+    imageUrl: toImageUrl(title.posterPath),
     rating: title.rating ?? undefined,
     year: title.releaseDate ? new Date(title.releaseDate).getFullYear() : undefined,
     href: title.mediaType === MediaType.MOVIE ? `/movies/${title.id}` : `/series/${title.id}`,
@@ -97,21 +108,21 @@ async function FavoritesRail({ userId, title }: { userId: string; title: string 
 }
 
 async function TrendingRail({ title }: { title: string }) {
-  const titles = await getTrending("all", "week");
+  const titles = await getTrendingTitlesAction(20);
   const items = titles.slice(0, 20).map(mapTitleToRailItem);
 
   return <Rail title={title} items={items} regionOrder={2} regionId="home-trending" />;
 }
 
 async function PopularMoviesRail({ title }: { title: string }) {
-  const response = await getPopularMovies();
+  const response = await getPopularMoviesAction();
   const items = response.results.slice(0, 20).map(mapTitleToRailItem);
 
   return <Rail title={title} items={items} regionOrder={4} regionId="home-popular-movies" />;
 }
 
 async function PopularSeriesRail({ title }: { title: string }) {
-  const response = await getPopularSeries();
+  const response = await getPopularSeriesAction();
   const items = response.results.slice(0, 20).map(mapTitleToRailItem);
 
   return <Rail title={title} items={items} regionOrder={5} regionId="home-popular-series" />;

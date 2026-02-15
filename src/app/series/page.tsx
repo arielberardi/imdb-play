@@ -1,11 +1,14 @@
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { FilterChips } from "@/components/molecules/FilterChips/FilterChips";
 import { Rail } from "@/components/molecules/Rail/Rail";
+import {
+  getPopularSeriesAction,
+  getSeriesGenresAction,
+  getTitlesByGenreAction,
+  type Title,
+} from "@/features/catalog";
 import { MediaType } from "@/generated/prisma";
 import { FocusRegionProvider } from "@/lib/a11y/focus-region";
-import { TV_GENRES } from "@/lib/imdb/constants";
-import { getByGenre, getPopularSeries } from "@/lib/imdb/queries";
-import type { Title } from "@/lib/imdb/types";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import styles from "./series.module.css";
@@ -19,7 +22,9 @@ function transformTitlesToRailItems(titles: Title[]) {
     id: title.id,
     title: title.title,
     imageUrl: title.posterPath
-      ? `https://image.tmdb.org/t/p/w500${title.posterPath}`
+      ? title.posterPath.startsWith("http")
+        ? title.posterPath
+        : `https://image.tmdb.org/t/p/w500${title.posterPath}`
       : "https://placehold.co/200x300/1f1f1f/a3a3a3?text=No+Image",
     rating: title.rating ?? undefined,
     year: title.releaseDate ? new Date(title.releaseDate).getFullYear() : undefined,
@@ -31,13 +36,14 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
   const t = await getTranslations("series");
   const params = await searchParams;
   const selectedGenre = params.genre;
+  const genres = await getSeriesGenresAction();
 
   return (
     <FocusRegionProvider>
       <main className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>{t("title")}</h1>
-          <FilterChips genres={TV_GENRES} basePath="/series" />
+          <FilterChips genres={genres} basePath="/series" />
         </div>
 
         <Suspense fallback={<RailSkeleton />}>
@@ -54,17 +60,21 @@ async function SeriesContent({ selectedGenre }: { selectedGenre?: string }) {
   let title = t("popularTitle");
 
   if (selectedGenre) {
-    const genre = TV_GENRES.find((g) => g.name === selectedGenre);
+    const genres = await getSeriesGenresAction();
+    const genre = genres.find((g) => g.name === selectedGenre);
     if (genre) {
-      const response = await getByGenre(MediaType.SERIES, genre.id);
+      const response = await getTitlesByGenreAction({
+        mediaType: MediaType.SERIES,
+        genreId: genre.id,
+      });
       series = response.results;
       title = t("genreTitle", { genre: selectedGenre });
     } else {
-      const response = await getPopularSeries();
+      const response = await getPopularSeriesAction();
       series = response.results;
     }
   } else {
-    const response = await getPopularSeries();
+    const response = await getPopularSeriesAction();
     series = response.results;
   }
 

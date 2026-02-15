@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import EpisodeSelector from "@/components/organisms/EpisodeSelector";
-import { getTitleDetails, MediaType } from "@/lib/imdb";
-import { isImdbNotFoundError, toUserSafeError } from "@/lib/imdb/error-handling";
+import { getTitleDetailsAction } from "@/features/catalog";
+import { MediaType } from "@/generated/prisma";
 import logger from "@/lib/logger";
 import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
@@ -21,10 +21,17 @@ export async function generateMetadata({ params }: SeriesDetailPageProps): Promi
   const { id } = await params;
 
   try {
-    const details = await getTitleDetails(id, MediaType.SERIES);
+    const details = await getTitleDetailsAction(id);
+    if (!details || details.mediaType !== MediaType.SERIES) {
+      return {
+        title: t("notFound"),
+      };
+    }
     const year = details.releaseDate ? new Date(details.releaseDate).getFullYear() : "";
     const backdropUrl = details.backdropPath
-      ? `https://image.tmdb.org/t/p/original${details.backdropPath}`
+      ? details.backdropPath.startsWith("http")
+        ? details.backdropPath
+        : `https://image.tmdb.org/t/p/original${details.backdropPath}`
       : "";
 
     return {
@@ -37,12 +44,7 @@ export async function generateMetadata({ params }: SeriesDetailPageProps): Promi
       },
     };
   } catch (error) {
-    if (isImdbNotFoundError(error)) {
-      return {
-        title: t("notFound"),
-      };
-    }
-
+    logger.error({ route: "/series/[id]", titleId: id, error }, "Failed to load series metadata");
     return {
       title: t("unavailable"),
     };
@@ -54,22 +56,21 @@ export default async function SeriesDetailPage({ params }: SeriesDetailPageProps
   let details;
 
   try {
-    details = await getTitleDetails(id, MediaType.SERIES);
-  } catch (error) {
-    if (isImdbNotFoundError(error)) {
+    details = await getTitleDetailsAction(id);
+    if (!details || details.mediaType !== MediaType.SERIES) {
       notFound();
     }
-
+  } catch (error) {
     logger.error(
       {
         route: "/series/[id]",
-        imdbId: id,
+        titleId: id,
         mediaType: MediaType.SERIES,
         error,
       },
       "Failed to load series details",
     );
-    throw toUserSafeError(error);
+    throw new Error("Failed to load series details");
   }
 
   const userState = await getUserTitleState(id);

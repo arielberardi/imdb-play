@@ -1,7 +1,7 @@
 import { ActionButtons } from "@/components/molecules/ActionButtons";
 import { BackdropImage } from "@/components/molecules/BackdropImage";
 import { TitleMetadata } from "@/components/molecules/TitleMetadata";
-import { TitleDetails } from "@/lib/imdb";
+import type { TitleDetails } from "@/features/catalog";
 import type { UserTitleState } from "@/lib/personalized-content/user-state";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -16,7 +16,9 @@ interface AssetDetailsHeroProps {
 export default function AssetDetailsHero({ details, mediaType, userState }: AssetDetailsHeroProps) {
   const t = useTranslations("assetDetails");
   const posterUrl = details.posterPath
-    ? `https://image.tmdb.org/t/p/w500${details.posterPath}`
+    ? details.posterPath.startsWith("http")
+      ? details.posterPath
+      : `https://image.tmdb.org/t/p/w500${details.posterPath}`
     : "";
 
   return (
@@ -47,7 +49,7 @@ export default function AssetDetailsHero({ details, mediaType, userState }: Asse
           <TitleMetadata details={details} />
           <ActionButtons
             trailers={details.trailers || []}
-            imdbId={details.id}
+            titleId={details.id}
             mediaType={mediaType}
             initialIsFavorite={userState?.isFavorite ?? false}
             initialIsInWatchlist={userState?.isInWatchlist ?? false}

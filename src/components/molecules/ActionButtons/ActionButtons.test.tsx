@@ -1,4 +1,4 @@
-import type { Trailer } from "@/lib/imdb";
+import type { Trailer } from "@/features/catalog";
 import { render, screen, waitFor } from "@/lib/test-utils";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -32,12 +32,12 @@ const mockTrailers: Trailer[] = [
 
 describe("ActionButtons", () => {
   it("renders play trailer button when trailers exist", () => {
-    render(<ActionButtons trailers={mockTrailers} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={mockTrailers} titleId="550" mediaType="movie" />);
     expect(screen.getByRole("button", { name: /play trailer/i })).toBeInTheDocument();
   });
 
   it("renders disabled button when no trailers", () => {
-    render(<ActionButtons trailers={[]} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={[]} titleId="550" mediaType="movie" />);
     const button = screen.getByRole("button", { name: /no trailer available/i });
     expect(button).toBeInTheDocument();
     expect(button).toBeDisabled();
@@ -45,7 +45,7 @@ describe("ActionButtons", () => {
 
   it("opens trailer modal when play button is clicked", async () => {
     const user = userEvent.setup();
-    render(<ActionButtons trailers={mockTrailers} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={mockTrailers} titleId="550" mediaType="movie" />);
 
     await user.click(screen.getByRole("button", { name: /play trailer/i }));
 
@@ -54,7 +54,7 @@ describe("ActionButtons", () => {
 
   it("closes trailer modal when close button is clicked", async () => {
     const user = userEvent.setup();
-    render(<ActionButtons trailers={mockTrailers} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={mockTrailers} titleId="550" mediaType="movie" />);
 
     await user.click(screen.getByRole("button", { name: /play trailer/i }));
     await user.click(screen.getByLabelText("Close trailer"));
@@ -64,23 +64,23 @@ describe("ActionButtons", () => {
 
   it("calls favorite add action", async () => {
     const user = userEvent.setup();
-    render(<ActionButtons trailers={mockTrailers} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={mockTrailers} titleId="550" mediaType="movie" />);
 
     await user.click(screen.getByLabelText("Add to favorites"));
 
     await waitFor(() => {
-      expect(addFavoriteActionMock).toHaveBeenCalledWith({ imdbId: "550", mediaType: "MOVIE" });
+      expect(addFavoriteActionMock).toHaveBeenCalledWith({ titleId: "550", mediaType: "MOVIE" });
     });
   });
 
   it("calls watchlist add action", async () => {
     const user = userEvent.setup();
-    render(<ActionButtons trailers={mockTrailers} imdbId="550" mediaType="movie" />);
+    render(<ActionButtons trailers={mockTrailers} titleId="550" mediaType="movie" />);
 
     await user.click(screen.getByLabelText("Add to watchlist"));
 
     await waitFor(() => {
-      expect(addToWatchlistActionMock).toHaveBeenCalledWith({ imdbId: "550", mediaType: "MOVIE" });
+      expect(addToWatchlistActionMock).toHaveBeenCalledWith({ titleId: "550", mediaType: "MOVIE" });
     });
   });
 });

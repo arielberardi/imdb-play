@@ -1,4 +1,4 @@
-import type { Episode } from "@/lib/imdb";
+import type { Episode } from "@/features/catalog";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { EpisodeCard } from "./EpisodeCard";
 

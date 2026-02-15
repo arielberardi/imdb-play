@@ -4,14 +4,14 @@ import prisma from "@/lib/prisma";
 
 export async function addToWatchlist(
   userId: string,
-  imdbId: string,
+  titleId: string,
   mediaType: MediaType,
 ): Promise<void> {
   await prisma.watchlist.upsert({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
     update: {
@@ -19,27 +19,27 @@ export async function addToWatchlist(
     },
     create: {
       userId,
-      imdbId,
+      titleId,
       mediaType,
     },
   });
 }
 
-export async function removeFromWatchlist(userId: string, imdbId: string): Promise<void> {
+export async function removeFromWatchlist(userId: string, titleId: string): Promise<void> {
   await prisma.watchlist.deleteMany({
     where: {
       userId,
-      imdbId,
+      titleId,
     },
   });
 }
 
-export async function isInWatchlist(userId: string, imdbId: string): Promise<boolean> {
+export async function isInWatchlist(userId: string, titleId: string): Promise<boolean> {
   const watchlistItem = await prisma.watchlist.findUnique({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
     select: {

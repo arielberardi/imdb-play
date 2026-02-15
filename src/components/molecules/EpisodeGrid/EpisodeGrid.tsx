@@ -1,7 +1,7 @@
 "use client";
 
 import { EpisodeCard } from "@/components/molecules/EpisodeCard";
-import { Episode } from "@/lib/imdb";
+import type { Episode } from "@/features/catalog";
 import { useTranslations } from "next-intl";
 import styles from "./EpisodeGrid.module.css";
 

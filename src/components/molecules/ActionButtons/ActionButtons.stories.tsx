@@ -1,4 +1,4 @@
-import type { Trailer } from "@/lib/imdb";
+import type { Trailer } from "@/features/catalog";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ActionButtons } from "./ActionButtons";
 
@@ -36,7 +36,7 @@ const mockTrailers: Trailer[] = [
 export const WithTrailers: Story = {
   args: {
     trailers: mockTrailers,
-    imdbId: "550",
+    titleId: "550",
     mediaType: "movie",
   },
 };
@@ -44,7 +44,7 @@ export const WithTrailers: Story = {
 export const WithoutTrailers: Story = {
   args: {
     trailers: [],
-    imdbId: "550",
+    titleId: "550",
     mediaType: "movie",
   },
 };
@@ -52,7 +52,7 @@ export const WithoutTrailers: Story = {
 export const SingleTrailer: Story = {
   args: {
     trailers: [mockTrailers[0]],
-    imdbId: "550",
+    titleId: "550",
     mediaType: "movie",
   },
 };

@@ -1,4 +1,4 @@
-import type { Person } from "@/lib/imdb";
+import type { Person } from "@/features/catalog";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CastCard } from "./CastCard";
 

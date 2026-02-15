@@ -1,4 +1,4 @@
-import type { Season } from "@/lib/imdb";
+import type { Season } from "@/features/catalog";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
 import { SeasonTabs } from "./SeasonTabs";

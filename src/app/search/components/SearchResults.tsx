@@ -1,7 +1,6 @@
 import { Icon } from "@/components/atoms/Icon";
 import { Rail } from "@/components/molecules/Rail/Rail";
-import { searchTitles } from "@/lib/imdb/queries";
-import type { Title } from "@/lib/imdb/types";
+import { searchTitlesAction, type Title } from "@/features/catalog";
 import { Film, Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import styles from "./SearchResults.module.css";
@@ -15,7 +14,9 @@ function transformTitlesToRailItems(titles: Title[]) {
     id: title.id,
     title: title.title,
     imageUrl: title.posterPath
-      ? `https://image.tmdb.org/t/p/w500${title.posterPath}`
+      ? title.posterPath.startsWith("http")
+        ? title.posterPath
+        : `https://image.tmdb.org/t/p/w500${title.posterPath}`
       : "https://placehold.co/200x300/1f1f1f/a3a3a3?text=No+Image",
     rating: title.rating ?? undefined,
     year: title.releaseDate ? new Date(title.releaseDate).getFullYear() : undefined,
@@ -38,7 +39,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
   }
 
   // Fetch search results
-  const response = await searchTitles(query, 1);
+  const response = await searchTitlesAction(query, 1);
 
   // Empty state: No results found
   if (response.results.length === 0) {

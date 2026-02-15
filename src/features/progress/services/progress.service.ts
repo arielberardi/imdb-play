@@ -14,7 +14,7 @@ function toProgressPercent(progressSeconds: number, durationSeconds: number): nu
 function withProgressPercent(item: {
   id: string;
   userId: string;
-  imdbId: string;
+  titleId: string;
   mediaType: MediaType;
   progressSeconds: number;
   durationSeconds: number;
@@ -28,16 +28,16 @@ function withProgressPercent(item: {
 
 export async function upsertProgress(
   userId: string,
-  imdbId: string,
+  titleId: string,
   mediaType: MediaType,
   progressSeconds: number,
   durationSeconds: number,
 ): Promise<ProgressItem> {
   const progress = await prisma.continueWatching.upsert({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
     update: {
@@ -47,7 +47,7 @@ export async function upsertProgress(
     },
     create: {
       userId,
-      imdbId,
+      titleId,
       mediaType,
       progressSeconds,
       durationSeconds,
@@ -57,12 +57,12 @@ export async function upsertProgress(
   return withProgressPercent(progress);
 }
 
-export async function getProgress(userId: string, imdbId: string): Promise<ProgressItem | null> {
+export async function getProgress(userId: string, titleId: string): Promise<ProgressItem | null> {
   const progress = await prisma.continueWatching.findUnique({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
   });
@@ -87,11 +87,11 @@ export async function listContinueWatching(userId: string): Promise<ProgressItem
   return items.map(withProgressPercent).filter((item) => item.progressPercent < 95);
 }
 
-export async function removeProgress(userId: string, imdbId: string): Promise<void> {
+export async function removeProgress(userId: string, titleId: string): Promise<void> {
   await prisma.continueWatching.deleteMany({
     where: {
       userId,
-      imdbId,
+      titleId,
     },
   });
 }

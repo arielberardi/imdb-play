@@ -11,7 +11,11 @@ interface BackdropImageProps {
 
 export function BackdropImage({ backdropPath, title }: BackdropImageProps) {
   const t = useTranslations("assetDetails");
-  const imageUrl = backdropPath ? `https://image.tmdb.org/t/p/original${backdropPath}` : "";
+  const imageUrl = backdropPath
+    ? backdropPath.startsWith("http")
+      ? backdropPath
+      : `https://image.tmdb.org/t/p/original${backdropPath}`
+    : "";
 
   if (!imageUrl) {
     return <div className={styles.backdropPlaceholder} />;

@@ -32,6 +32,72 @@
   flex: 1;
 }
 
+.spaceMd {
+  margin-bottom: var(--spacing-md);
+}
+
+.spaceLg {
+  margin-bottom: var(--spacing-lg);
+}
+
+.spaceSm {
+  margin-bottom: var(--spacing-sm);
+}
+
+.spaceXs {
+  margin-bottom: var(--spacing-xs);
+}
+
+.spaceXl {
+  margin-bottom: var(--spacing-xl);
+}
+
+.inlineRowLg {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.inlineRowSm {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.inlineRowMd {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.sectionPad {
+  padding: var(--spacing-2xl);
+}
+
+.episodeTabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.episodeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.inlineList {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: hidden;
+}
+
+.inlineListItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 @media (min-width: 768px) {
   .content {
     flex-direction: row;

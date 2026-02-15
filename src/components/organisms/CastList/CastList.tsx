@@ -1,5 +1,5 @@
 import { CastCard } from "@/components/molecules/CastCard";
-import { Person } from "@/lib/imdb";
+import type { Person } from "@/features/catalog";
 import { useTranslations } from "next-intl";
 import styles from "./CastList.module.css";
 

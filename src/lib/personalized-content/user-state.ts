@@ -13,7 +13,7 @@ export interface UserTitleState {
   } | null;
 }
 
-export async function getUserTitleState(imdbId: string): Promise<UserTitleState> {
+export async function getUserTitleState(titleId: string): Promise<UserTitleState> {
   const user = await getOptionalUser();
 
   if (!user) {
@@ -25,9 +25,9 @@ export async function getUserTitleState(imdbId: string): Promise<UserTitleState>
   }
 
   const [favorite, watchlist, progress] = await Promise.all([
-    isFavorite(user.id, imdbId),
-    isInWatchlist(user.id, imdbId),
-    getProgress(user.id, imdbId),
+    isFavorite(user.id, titleId),
+    isInWatchlist(user.id, titleId),
+    getProgress(user.id, titleId),
   ]);
 
   return {

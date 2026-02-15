@@ -22,17 +22,17 @@ export async function addToWatchlistAction(
   if (!parsed.success) {
     return {
       success: false,
-      message: parsed.error.flatten().fieldErrors.imdbId?.[0] ?? "Invalid watchlist request.",
+      message: parsed.error.flatten().fieldErrors.titleId?.[0] ?? "Invalid watchlist request.",
     };
   }
 
   try {
     const user = await requireUser();
-    await addToWatchlist(user.id, parsed.data.imdbId, parsed.data.mediaType);
+    await addToWatchlist(user.id, parsed.data.titleId, parsed.data.mediaType);
 
     revalidatePath("/");
-    revalidatePath(`/movies/${parsed.data.imdbId}`);
-    revalidatePath(`/series/${parsed.data.imdbId}`);
+    revalidatePath(`/movies/${parsed.data.titleId}`);
+    revalidatePath(`/series/${parsed.data.titleId}`);
 
     return {
       success: true,
@@ -52,8 +52,8 @@ export async function addToWatchlistAction(
   }
 }
 
-export async function removeFromWatchlistAction(imdbId: string): Promise<WatchlistActionResult> {
-  if (!imdbId || imdbId.trim().length === 0) {
+export async function removeFromWatchlistAction(titleId: string): Promise<WatchlistActionResult> {
+  if (!titleId || titleId.trim().length === 0) {
     return {
       success: false,
       message: "Title id is required.",
@@ -62,11 +62,11 @@ export async function removeFromWatchlistAction(imdbId: string): Promise<Watchli
 
   try {
     const user = await requireUser();
-    await removeFromWatchlist(user.id, imdbId);
+    await removeFromWatchlist(user.id, titleId);
 
     revalidatePath("/");
-    revalidatePath(`/movies/${imdbId}`);
-    revalidatePath(`/series/${imdbId}`);
+    revalidatePath(`/movies/${titleId}`);
+    revalidatePath(`/series/${titleId}`);
 
     return {
       success: true,

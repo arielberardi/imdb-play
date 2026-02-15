@@ -4,14 +4,14 @@ import prisma from "@/lib/prisma";
 
 export async function addFavorite(
   userId: string,
-  imdbId: string,
+  titleId: string,
   mediaType: MediaType,
 ): Promise<void> {
   await prisma.favorite.upsert({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
     update: {
@@ -19,27 +19,27 @@ export async function addFavorite(
     },
     create: {
       userId,
-      imdbId,
+      titleId,
       mediaType,
     },
   });
 }
 
-export async function removeFavorite(userId: string, imdbId: string): Promise<void> {
+export async function removeFavorite(userId: string, titleId: string): Promise<void> {
   await prisma.favorite.deleteMany({
     where: {
       userId,
-      imdbId,
+      titleId,
     },
   });
 }
 
-export async function isFavorite(userId: string, imdbId: string): Promise<boolean> {
+export async function isFavorite(userId: string, titleId: string): Promise<boolean> {
   const favorite = await prisma.favorite.findUnique({
     where: {
-      userId_imdbId: {
+      userId_titleId: {
         userId,
-        imdbId,
+        titleId,
       },
     },
     select: {

@@ -1,6 +1,6 @@
 import { RatingBadge } from "@/components/atoms/RatingBadge";
 import { Tag } from "@/components/atoms/Tag";
-import { TitleDetails } from "@/lib/imdb";
+import type { TitleDetails } from "@/features/catalog";
 import styles from "./TitleMetadata.module.css";
 
 interface TitleMetadataProps {
@@ -9,20 +9,21 @@ interface TitleMetadataProps {
 
 export function TitleMetadata({ details }: TitleMetadataProps) {
   const year = details.releaseDate ? new Date(details.releaseDate).getFullYear() : null;
+  const voteAverage = details.voteAverage ?? 0;
 
   return (
     <div className={styles.titleMetadata}>
       <h1 className={styles.title}>{details.title}</h1>
 
       <div className={styles.metaInfo}>
-        {details.voteAverage > 0 && <RatingBadge rating={details.voteAverage} />}
+        {voteAverage > 0 && <RatingBadge rating={voteAverage} />}
         {year && <span className={styles.year}>{year}</span>}
       </div>
 
       {details.genres && details.genres.length > 0 && (
         <div className={styles.genres}>
           {details.genres.map((genre) => (
-            <Tag key={genre.id} label={genre.name} />
+            <Tag key={genre.id}>{genre.name}</Tag>
           ))}
         </div>
       )}

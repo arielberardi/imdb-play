@@ -1,35 +1,23 @@
 import type { MediaType } from "@/generated/prisma";
 
-/**
- * Genre information
- */
 export interface Genre {
   id: number;
   name: string;
 }
 
-/**
- * Person (cast or crew member)
- */
 export interface Person {
-  id: number;
+  id: string | number;
   name: string;
   character?: string;
   job?: string;
   profilePath: string | null;
 }
 
-/**
- * Cast and crew credits
- */
 export interface Credits {
   cast: Person[];
   crew: Person[];
 }
 
-/**
- * Video trailer information
- */
 export interface Trailer {
   id: string;
   key: string;
@@ -39,39 +27,31 @@ export interface Trailer {
   official: boolean;
 }
 
-/**
- * Episode information for TV series
- */
 export interface Episode {
-  id: number;
+  id: string | number;
   episodeNumber: number;
   name: string;
   overview: string;
   stillPath: string | null;
   airDate: string | null;
-  runtime: number | null;
+  runtime: number | null | undefined;
+  voteAverage?: number | null;
+  voteCount?: number;
 }
 
-/**
- * Season information for TV series
- */
 export interface Season {
-  id: number;
+  id: string | number;
   seasonNumber: number;
   name: string;
   overview: string;
-  posterPath: string | null;
+  posterPath?: string | null;
   episodeCount: number;
-  airDate: string | null;
+  airDate?: string | null;
   episodes?: Episode[];
 }
 
-/**
- * Base title information (movie or TV series)
- */
 export interface Title {
   id: string;
-  imdbId: string | null;
   title: string;
   originalTitle: string;
   mediaType: MediaType;
@@ -82,13 +62,11 @@ export interface Title {
   posterPath: string | null;
   backdropPath: string | null;
   rating: number | null;
+  voteAverage: number | null;
   voteCount: number;
   popularity: number;
 }
 
-/**
- * Extended title information with credits and trailers
- */
 export interface TitleDetails extends Title {
   tagline: string | null;
   status: string | null;
@@ -98,9 +76,6 @@ export interface TitleDetails extends Title {
   seasons?: Season[];
 }
 
-/**
- * Paginated API response wrapper
- */
 export interface PaginatedResponse<T> {
   results: T[];
   page: number;

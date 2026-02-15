@@ -1,11 +1,14 @@
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { FilterChips } from "@/components/molecules/FilterChips/FilterChips";
 import { Rail } from "@/components/molecules/Rail/Rail";
+import {
+  getMovieGenresAction,
+  getPopularMoviesAction,
+  getTitlesByGenreAction,
+  type Title,
+} from "@/features/catalog";
 import { MediaType } from "@/generated/prisma";
 import { FocusRegionProvider } from "@/lib/a11y/focus-region";
-import { MOVIE_GENRES } from "@/lib/imdb/constants";
-import { getByGenre, getPopularMovies } from "@/lib/imdb/queries";
-import type { Title } from "@/lib/imdb/types";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import styles from "./films.module.css";
@@ -19,7 +22,9 @@ function transformTitlesToRailItems(titles: Title[]) {
     id: title.id,
     title: title.title,
     imageUrl: title.posterPath
-      ? `https://image.tmdb.org/t/p/w500${title.posterPath}`
+      ? title.posterPath.startsWith("http")
+        ? title.posterPath
+        : `https://image.tmdb.org/t/p/w500${title.posterPath}`
       : "https://placehold.co/200x300/1f1f1f/a3a3a3?text=No+Image",
     rating: title.rating ?? undefined,
     year: title.releaseDate ? new Date(title.releaseDate).getFullYear() : undefined,
@@ -31,13 +36,14 @@ export default async function FilmsPage({ searchParams }: FilmsPageProps) {
   const t = await getTranslations("films");
   const params = await searchParams;
   const selectedGenre = params.genre;
+  const genres = await getMovieGenresAction();
 
   return (
     <FocusRegionProvider>
       <main className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>{t("title")}</h1>
-          <FilterChips genres={MOVIE_GENRES} basePath="/films" />
+          <FilterChips genres={genres} basePath="/films" />
         </div>
 
         <Suspense fallback={<RailSkeleton />}>
@@ -54,17 +60,21 @@ async function FilmsContent({ selectedGenre }: { selectedGenre?: string }) {
   let title = t("popularTitle");
 
   if (selectedGenre) {
-    const genre = MOVIE_GENRES.find((g) => g.name === selectedGenre);
+    const genres = await getMovieGenresAction();
+    const genre = genres.find((g) => g.name === selectedGenre);
     if (genre) {
-      const response = await getByGenre(MediaType.MOVIE, genre.id);
+      const response = await getTitlesByGenreAction({
+        mediaType: MediaType.MOVIE,
+        genreId: genre.id,
+      });
       movies = response.results;
       title = t("genreTitle", { genre: selectedGenre });
     } else {
-      const response = await getPopularMovies();
+      const response = await getPopularMoviesAction();
       movies = response.results;
     }
   } else {
-    const response = await getPopularMovies();
+    const response = await getPopularMoviesAction();
     movies = response.results;
   }
 

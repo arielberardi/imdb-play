@@ -16,17 +16,17 @@ export async function addFavoriteAction(input: AddFavoriteInput): Promise<Favori
   if (!parsed.success) {
     return {
       success: false,
-      message: parsed.error.flatten().fieldErrors.imdbId?.[0] ?? "Invalid favorite request.",
+      message: parsed.error.flatten().fieldErrors.titleId?.[0] ?? "Invalid favorite request.",
     };
   }
 
   try {
     const user = await requireUser();
-    await addFavorite(user.id, parsed.data.imdbId, parsed.data.mediaType);
+    await addFavorite(user.id, parsed.data.titleId, parsed.data.mediaType);
 
     revalidatePath("/");
-    revalidatePath(`/movies/${parsed.data.imdbId}`);
-    revalidatePath(`/series/${parsed.data.imdbId}`);
+    revalidatePath(`/movies/${parsed.data.titleId}`);
+    revalidatePath(`/series/${parsed.data.titleId}`);
 
     return {
       success: true,
@@ -46,8 +46,8 @@ export async function addFavoriteAction(input: AddFavoriteInput): Promise<Favori
   }
 }
 
-export async function removeFavoriteAction(imdbId: string): Promise<FavoriteActionResult> {
-  if (!imdbId || imdbId.trim().length === 0) {
+export async function removeFavoriteAction(titleId: string): Promise<FavoriteActionResult> {
+  if (!titleId || titleId.trim().length === 0) {
     return {
       success: false,
       message: "Title id is required.",
@@ -56,11 +56,11 @@ export async function removeFavoriteAction(imdbId: string): Promise<FavoriteActi
 
   try {
     const user = await requireUser();
-    await removeFavorite(user.id, imdbId);
+    await removeFavorite(user.id, titleId);
 
     revalidatePath("/");
-    revalidatePath(`/movies/${imdbId}`);
-    revalidatePath(`/series/${imdbId}`);
+    revalidatePath(`/movies/${titleId}`);
+    revalidatePath(`/series/${titleId}`);
 
     return {
       success: true,

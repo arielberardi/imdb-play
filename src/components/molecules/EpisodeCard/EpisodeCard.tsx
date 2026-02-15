@@ -1,6 +1,6 @@
 "use client";
 
-import { Episode } from "@/lib/imdb";
+import type { Episode } from "@/features/catalog";
 import Image from "next/image";
 import { useState } from "react";
 import styles from "./EpisodeCard.module.css";

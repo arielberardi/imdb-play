@@ -1,4 +1,4 @@
-import type { Episode } from "@/lib/imdb";
+import type { Episode } from "@/features/catalog";
 import { render } from "@/lib/test-utils";
 import { describe, expect, it } from "vitest";
 import { EpisodeCard } from "./EpisodeCard";

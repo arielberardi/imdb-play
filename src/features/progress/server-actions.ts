@@ -26,15 +26,15 @@ export async function upsertProgressAction(
     const user = await requireUser();
     await upsertProgress(
       user.id,
-      parsed.data.imdbId,
+      parsed.data.titleId,
       parsed.data.mediaType,
       parsed.data.progressSeconds,
       parsed.data.durationSeconds,
     );
 
     revalidatePath("/");
-    revalidatePath(`/movies/${parsed.data.imdbId}`);
-    revalidatePath(`/series/${parsed.data.imdbId}`);
+    revalidatePath(`/movies/${parsed.data.titleId}`);
+    revalidatePath(`/series/${parsed.data.titleId}`);
 
     return {
       success: true,
@@ -63,8 +63,8 @@ export async function listContinueWatchingAction(): Promise<ProgressItem[]> {
   }
 }
 
-export async function removeProgressAction(imdbId: string): Promise<ProgressActionResult> {
-  if (!imdbId || imdbId.trim().length === 0) {
+export async function removeProgressAction(titleId: string): Promise<ProgressActionResult> {
+  if (!titleId || titleId.trim().length === 0) {
     return {
       success: false,
       message: "Title id is required.",
@@ -73,11 +73,11 @@ export async function removeProgressAction(imdbId: string): Promise<ProgressActi
 
   try {
     const user = await requireUser();
-    await removeProgress(user.id, imdbId);
+    await removeProgress(user.id, titleId);
 
     revalidatePath("/");
-    revalidatePath(`/movies/${imdbId}`);
-    revalidatePath(`/series/${imdbId}`);
+    revalidatePath(`/movies/${titleId}`);
+    revalidatePath(`/series/${titleId}`);
 
     return {
       success: true,

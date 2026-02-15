@@ -34,6 +34,14 @@
   padding: var(--spacing-md);
 }
 
+.skeletonSpaceMd {
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeletonSpaceXs {
+  margin-bottom: var(--spacing-xs);
+}
+
 .error p,
 .noEpisodes p {
   color: var(--color-text-secondary);

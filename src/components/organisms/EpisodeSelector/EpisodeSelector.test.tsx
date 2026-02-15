@@ -8,7 +8,7 @@ vi.mock("@/generated/prisma", () => ({
   },
 }));
 
-import type { Season } from "@/lib/imdb/types";
+import type { Season } from "@/features/catalog/types";
 import { render, screen } from "@/lib/test-utils";
 import EpisodeSelector from "./EpisodeSelector";
 

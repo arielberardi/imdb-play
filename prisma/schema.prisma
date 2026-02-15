@@ -15,6 +15,11 @@ enum MediaType {
   SERIES
 }
 
+enum TitleType {
+  MOVIE
+  SERIES
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -26,6 +31,141 @@ model User {
   favorites        Favorite[]
   watchlist        Watchlist[]
   continueWatching ContinueWatching[]
+}
+
+model Title {
+  id               String      @id
+  titleType        TitleType
+  title            String
+  originalTitle    String
+  overview         String
+  releaseDate      DateTime?
+  runtimeMinutes   Int?
+  posterUrl        String?
+  backdropUrl      String?
+  voteAverage      Float?
+  voteCount        Int         @default(0)
+  popularity       Float       @default(0)
+  tagline          String?
+  status           String?
+  originalLanguage String?     @default("en")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  genres   TitleGenre[]
+  cast     TitleCast[]
+  trailers Trailer[]
+  seasons  Season[]
+
+  favorites        Favorite[]
+  watchlist        Watchlist[]
+  continueWatching ContinueWatching[]
+
+  @@index([titleType])
+  @@index([voteCount(sort: Desc), voteAverage(sort: Desc)])
+  @@index([popularity(sort: Desc)])
+  @@index([releaseDate(sort: Desc)])
+}
+
+model Genre {
+  id        Int         @id
+  name      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  titles TitleGenre[]
+}
+
+model TitleGenre {
+  id        String   @id @default(cuid())
+  titleId   String
+  genreId   Int
+  createdAt DateTime @default(now())
+
+  title Title @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Restrict)
+
+  @@unique([titleId, genreId])
+  @@index([genreId])
+}
+
+model Person {
+  id          String   @id
+  name        String
+  profilePath String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  castCredits TitleCast[]
+}
+
+model TitleCast {
+  id          String   @id @default(cuid())
+  titleId     String
+  personId    String
+  character   String?
+  castOrder   Int?
+  createdAt   DateTime @default(now())
+
+  title  Title  @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([titleId, personId, character])
+  @@index([titleId, castOrder])
+}
+
+model Trailer {
+  id        String   @id
+  titleId   String
+  key       String
+  name      String
+  site      String
+  type      String
+  official  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  title Title @relation(fields: [titleId], references: [id], onDelete: Cascade)
+
+  @@index([titleId])
+}
+
+model Season {
+  id            String    @id
+  titleId       String
+  seasonNumber  Int
+  name          String
+  overview      String
+  posterPath    String?
+  episodeCount  Int       @default(0)
+  airDate       DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  title    Title     @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  episodes Episode[]
+
+  @@unique([titleId, seasonNumber])
+  @@index([titleId])
+}
+
+model Episode {
+  id            String   @id
+  seasonId      String
+  episodeNumber Int
+  name          String
+  overview      String
+  stillPath     String?
+  airDate       DateTime?
+  runtime       Int?
+  voteAverage   Float?
+  voteCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, episodeNumber])
+  @@index([seasonId])
 }
 
 model Session {
@@ -46,44 +186,47 @@ model Session {
 model Favorite {
   id        String    @id @default(cuid())
   userId    String
-  imdbId    String
+  titleId   String
   mediaType MediaType
   createdAt DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title Title @relation(fields: [titleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, imdbId])
+  @@unique([userId, titleId])
   @@index([userId])
-  @@index([imdbId])
+  @@index([titleId])
 }
 
 model Watchlist {
   id        String    @id @default(cuid())
   userId    String
-  imdbId    String
+  titleId   String
   mediaType MediaType
   createdAt DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title Title @relation(fields: [titleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, imdbId])
+  @@unique([userId, titleId])
   @@index([userId])
-  @@index([imdbId])
+  @@index([titleId])
 }
 
 model ContinueWatching {
   id              String    @id @default(cuid())
   userId          String
-  imdbId          String
+  titleId         String
   mediaType       MediaType
   progressSeconds Int
   durationSeconds Int
   updatedAt       DateTime  @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title Title @relation(fields: [titleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, imdbId])
+  @@unique([userId, titleId])
   @@index([userId])
-  @@index([imdbId])
+  @@index([titleId])
   @@index([updatedAt])
 }

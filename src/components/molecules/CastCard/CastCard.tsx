@@ -1,5 +1,5 @@
 import { PersonImage } from "@/components/atoms/PersonImage";
-import { Person } from "@/lib/imdb";
+import type { Person } from "@/features/catalog";
 import styles from "./CastCard.module.css";
 
 interface CastCardProps {

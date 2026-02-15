@@ -1,4 +1,4 @@
-import type { Season } from "@/lib/imdb";
+import type { Season } from "@/features/catalog";
 import { render, screen } from "@/lib/test-utils";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";

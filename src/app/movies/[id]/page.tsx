@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
-import { getTitleDetails, MediaType } from "@/lib/imdb";
-import { isImdbNotFoundError, toUserSafeError } from "@/lib/imdb/error-handling";
+import { getTitleDetailsAction } from "@/features/catalog";
+import { MediaType } from "@/generated/prisma";
 import logger from "@/lib/logger";
 import { getUserTitleState } from "@/lib/personalized-content/user-state";
 import { Metadata } from "next";
@@ -20,10 +20,17 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
   const { id } = await params;
 
   try {
-    const details = await getTitleDetails(id, MediaType.MOVIE);
+    const details = await getTitleDetailsAction(id);
+    if (!details || details.mediaType !== MediaType.MOVIE) {
+      return {
+        title: t("notFound"),
+      };
+    }
     const year = details.releaseDate ? new Date(details.releaseDate).getFullYear() : "";
     const backdropUrl = details.backdropPath
-      ? `https://image.tmdb.org/t/p/original${details.backdropPath}`
+      ? details.backdropPath.startsWith("http")
+        ? details.backdropPath
+        : `https://image.tmdb.org/t/p/original${details.backdropPath}`
       : "";
 
     return {
@@ -36,12 +43,7 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
       },
     };
   } catch (error) {
-    if (isImdbNotFoundError(error)) {
-      return {
-        title: t("notFound"),
-      };
-    }
-
+    logger.error({ route: "/movies/[id]", titleId: id, error }, "Failed to load movie metadata");
     return {
       title: t("unavailable"),
     };
@@ -53,22 +55,21 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
   let details;
 
   try {
-    details = await getTitleDetails(id, MediaType.MOVIE);
-  } catch (error) {
-    if (isImdbNotFoundError(error)) {
+    details = await getTitleDetailsAction(id);
+    if (!details || details.mediaType !== MediaType.MOVIE) {
       notFound();
     }
-
+  } catch (error) {
     logger.error(
       {
         route: "/movies/[id]",
-        imdbId: id,
+        titleId: id,
         mediaType: MediaType.MOVIE,
         error,
       },
       "Failed to load movie details",
     );
-    throw toUserSafeError(error);
+    throw new Error("Failed to load movie details");
   }
 
   const userState = await getUserTitleState(id);

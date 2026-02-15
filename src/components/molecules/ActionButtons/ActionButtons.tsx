@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/atoms/Button";
 import TrailerModal from "@/components/organisms/TrailerModal";
+import type { Trailer } from "@/features/catalog";
 import { addFavoriteAction, removeFavoriteAction } from "@/features/favorites/server-actions";
 import {
   addToWatchlistAction,
   removeFromWatchlistAction,
 } from "@/features/watchlist/server-actions";
 import { MediaType } from "@/generated/prisma";
-import { Trailer } from "@/lib/imdb";
+import clsx from "clsx";
 import { Check, Heart, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useOptimistic, useState, useTransition } from "react";
@@ -16,7 +17,7 @@ import styles from "./ActionButtons.module.css";
 
 interface ActionButtonsProps {
   trailers: Trailer[];
-  imdbId: string;
+  titleId: string;
   mediaType: "movie" | "series";
   initialIsFavorite?: boolean;
   initialIsInWatchlist?: boolean;
@@ -28,7 +29,7 @@ function toPrismaMediaType(mediaType: "movie" | "series"): MediaType {
 
 export function ActionButtons({
   trailers,
-  imdbId,
+  titleId,
   mediaType,
   initialIsFavorite = false,
   initialIsInWatchlist = false,
@@ -48,10 +49,10 @@ export function ActionButtons({
 
       const result = nextFavoriteState
         ? await addFavoriteAction({
-            imdbId,
+            titleId,
             mediaType: toPrismaMediaType(mediaType),
           })
-        : await removeFavoriteAction(imdbId);
+        : await removeFavoriteAction(titleId);
 
       if (!result.success) {
         setFavoriteState(!nextFavoriteState);
@@ -66,10 +67,10 @@ export function ActionButtons({
 
       const result = nextWatchlistState
         ? await addToWatchlistAction({
-            imdbId,
+            titleId,
             mediaType: toPrismaMediaType(mediaType),
           })
-        : await removeFromWatchlistAction(imdbId);
+        : await removeFromWatchlistAction(titleId);
 
       if (!result.success) {
         setWatchlistState(!nextWatchlistState);
@@ -89,7 +90,7 @@ export function ActionButtons({
 
       <button
         type="button"
-        className={`${styles.iconButton} ${favoriteState ? styles.activeFavorite : ""}`}
+        className={clsx(styles.iconButton, favoriteState && styles.activeFavorite)}
         title={favoriteState ? t("removeFavoritesTitle") : t("addFavoritesTitle")}
         onClick={onToggleFavorite}
         disabled={isPending}
@@ -100,7 +101,7 @@ export function ActionButtons({
 
       <button
         type="button"
-        className={`${styles.iconButton} ${watchlistState ? styles.activeWatchlist : ""}`}
+        className={clsx(styles.iconButton, watchlistState && styles.activeWatchlist)}
         title={watchlistState ? t("removeWatchlistTitle") : t("addWatchlistTitle")}
         onClick={onToggleWatchlist}
         disabled={isPending}

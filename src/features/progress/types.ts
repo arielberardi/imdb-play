@@ -1,7 +1,7 @@
 import type { MediaType } from "@/generated/prisma";
 
 export interface UpsertProgressInput {
-  imdbId: string;
+  titleId: string;
   mediaType: MediaType;
   progressSeconds: number;
   durationSeconds: number;
@@ -10,7 +10,7 @@ export interface UpsertProgressInput {
 export interface ProgressItem {
   id: string;
   userId: string;
-  imdbId: string;
+  titleId: string;
   mediaType: MediaType;
   progressSeconds: number;
   durationSeconds: number;

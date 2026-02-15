@@ -1,4 +1,4 @@
-import type { TitleDetails } from "@/lib/imdb";
+import type { TitleDetails } from "@/features/catalog";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TitleMetadata } from "./TitleMetadata";
 
@@ -16,14 +16,22 @@ type Story = StoryObj<typeof meta>;
 
 const mockMovieDetails: TitleDetails = {
   id: "550",
+  mediaType: "MOVIE",
   title: "Fight Club",
+  originalTitle: "Fight Club",
   overview:
     'A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground "fight clubs" forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.',
   releaseDate: "1999-10-15",
   voteAverage: 8.4,
   voteCount: 27000,
+  rating: 8.4,
+  popularity: 99.1,
+  runtime: 139,
   backdropPath: "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg",
   posterPath: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
+  tagline: "Mischief. Mayhem. Soap.",
+  status: "Released",
+  originalLanguage: "en",
   genres: [
     { id: 18, name: "Drama" },
     { id: 53, name: "Thriller" },

@@ -3,8 +3,8 @@
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { EpisodeGrid } from "@/components/molecules/EpisodeGrid";
 import { SeasonTabs } from "@/components/molecules/SeasonTabs";
-import { getEpisodes } from "@/lib/imdb/queries";
-import type { Episode, Season } from "@/lib/imdb/types";
+import { getEpisodesAction } from "@/features/catalog";
+import type { Episode, Season } from "@/features/catalog/types";
 import logger from "@/lib/logger";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
       setError(null);
 
       try {
-        const episodesData = await getEpisodes(tvId, selectedSeasonNumber);
+        const episodesData = await getEpisodesAction({ tvId, seasonNumber: selectedSeasonNumber });
         setEpisodes(episodesData);
       } catch (err) {
         logger.error(
@@ -85,21 +85,9 @@ export default function EpisodeSelector({ tvId, seasons }: EpisodeSelectorProps)
             <div className={styles.episodeGrid}>
               {[...Array(10)].map((_, i) => (
                 <div key={i} className={styles.episodeSkeleton}>
-                  <Skeleton
-                    width="100%"
-                    height="180px"
-                    style={{ marginBottom: "var(--spacing-sm)" }}
-                  />
-                  <Skeleton
-                    width="60%"
-                    height="20px"
-                    style={{ marginBottom: "var(--spacing-xs)" }}
-                  />
-                  <Skeleton
-                    width="100%"
-                    height="16px"
-                    style={{ marginBottom: "var(--spacing-xs)" }}
-                  />
+                  <Skeleton width="100%" height="180px" className={styles.skeletonSpaceMd} />
+                  <Skeleton width="60%" height="20px" className={styles.skeletonSpaceXs} />
+                  <Skeleton width="100%" height="16px" className={styles.skeletonSpaceXs} />
                   <Skeleton width="100%" height="16px" />
                 </div>
               ))}
