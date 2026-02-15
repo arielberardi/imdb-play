@@ -179,7 +179,10 @@ function buildPeopleAndCastRows(titles) {
   for (const title of titles) {
     const castNames = title.cast.length > 0 ? title.cast.slice(0, PERSONS_PER_TITLE) : [];
     const fallbackCount = PERSONS_PER_TITLE - castNames.length;
-    const fallbackNames = Array.from({ length: fallbackCount }, (_, index) => `Performer ${index + 1}`);
+    const fallbackNames = Array.from(
+      { length: fallbackCount },
+      (_, index) => `Performer ${index + 1}`,
+    );
     const finalNames = [...castNames, ...fallbackNames];
 
     finalNames.forEach((name, index) => {
