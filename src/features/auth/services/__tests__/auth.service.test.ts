@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { describe, expect, it, vi } from "vitest";
-import { createUser, findUserByEmail, verifyUserCredentials } from "./auth.service";
-import { verifyPassword } from "./password.service";
+import { createUser, findUserByEmail, verifyUserCredentials } from "../auth.service";
+import { verifyPassword } from "../password.service";
 
 vi.mock("@/lib/prisma", () => ({
   default: {
@@ -12,7 +12,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-vi.mock("./password.service", () => ({
+vi.mock("../password.service", () => ({
   verifyPassword: vi.fn(),
 }));
 

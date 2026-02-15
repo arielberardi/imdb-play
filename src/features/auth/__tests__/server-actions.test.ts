@@ -1,29 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { signInAction, signOutAction, signUpAction } from "./server-actions";
+import { signInAction, signOutAction, signUpAction } from "../server-actions";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
 }));
 
-vi.mock("./services/auth.service", () => ({
+vi.mock("../services/auth.service", () => ({
   createUser: vi.fn(),
   findUserByEmail: vi.fn(),
   verifyUserCredentials: vi.fn(),
 }));
 
-vi.mock("./services/password.service", () => ({
+vi.mock("../services/password.service", () => ({
   hashPassword: vi.fn(),
 }));
 
-vi.mock("./services/session.service", () => ({
+vi.mock("../services/session.service", () => ({
   createSession: vi.fn(),
   destroySession: vi.fn(),
 }));
 
 import { redirect } from "next/navigation";
-import { createUser, findUserByEmail, verifyUserCredentials } from "./services/auth.service";
-import { hashPassword } from "./services/password.service";
-import { createSession, destroySession } from "./services/session.service";
+import { createUser, findUserByEmail, verifyUserCredentials } from "../services/auth.service";
+import { hashPassword } from "../services/password.service";
+import { createSession, destroySession } from "../services/session.service";
 
 describe("server-actions", () => {
   beforeEach(() => {

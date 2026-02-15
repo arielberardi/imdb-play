@@ -223,7 +223,16 @@ Required for:
 | Hooks      | `__tests__/` |
 | Utils      | `__tests__/` |
 | Services   | `__tests__/` |
+| Server Actions | `__tests__/` |
+| Validators | `__tests__/` |
 | E2E        | root `e2e/`  |
+
+## Test Placement Conventions (MANDATORY)
+
+* All non-component tests must be in the nearest `__tests__/` directory.
+* Applies to hooks, utilities, services, server actions, and validators.
+* Do not place non-component `*.test.ts` or `*.test.tsx` beside implementation files.
+* Component tests remain colocated in the component folder.
 
 ## E2E Must Cover
 
@@ -458,6 +467,7 @@ Before marking complete:
 * [ ] ESLint clean
 * [ ] Prettier applied
 * [ ] Tests written and passing
+* [ ] No non-component test files outside `__tests__/`
 * [ ] Storybook added
 * [ ] a11y verified
 * [ ] No console warnings
@@ -537,3 +547,4 @@ This project currently supports only `en`, but implementation must remain locale
 
 ## Changelog
 - Added project requirement to use `next-intl` and locale-based UI text for all runtime user-facing strings.
+- Strengthened test placement rules: non-component tests (hooks/utils/services/server actions/validators) must use `__tests__/`.

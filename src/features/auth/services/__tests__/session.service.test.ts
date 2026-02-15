@@ -2,7 +2,7 @@ import { AuthRequiredError } from "@/features/auth/errors";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createSession, destroySession, getOptionalUser, requireUser } from "./session.service";
+import { createSession, destroySession, getOptionalUser, requireUser } from "../session.service";
 
 const cookieStore = {
   get: vi.fn(),
