@@ -33,6 +33,7 @@ When rules conflict, follow this order:
 - Must finish with lint and format checks passing.
 - Must maintain accessibility standards (WCAG AA baseline).
 - Must maintain responsive behavior (mobile-first + desktop).
+- Must route user-facing copy through translation files (for example `src/messages/en.json`) rather than hardcoding text in pages/components.
 
 ---
 
@@ -125,6 +126,7 @@ Rules:
 - Use Client Components only when needed.
 - Use Suspense boundaries for async UI.
 - Use error boundaries for isolation and recovery.
+- For localized copy, use `next-intl` (`getTranslations` on server components/pages and `useTranslations` on client components) and keep text in message files.
 
 Required async boundary pattern:
 
