@@ -12,7 +12,7 @@
     "format:fix": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "prepare": "husky || true",
     "lint-staged": "lint-staged",
-    "test": "vitest run",
+    "test": "vitest run --browser.enabled=false",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",

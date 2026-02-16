@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-// Mock Prisma client to avoid browser compatibility issues
-vi.mock("@/generated/prisma", () => ({
-  MediaType: {
-    MOVIE: "MOVIE",
-    SERIES: "SERIES",
-  },
+vi.mock("@/features/catalog", () => ({
+  getEpisodesAction: vi.fn().mockResolvedValue([]),
 }));
 
 import type { Season } from "@/features/catalog/types";

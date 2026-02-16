@@ -1,5 +1,5 @@
 import { FocusRegionProvider } from "@/lib/a11y/focus-region";
-import { fireEvent, render, screen } from "@/lib/test-utils";
+import { fireEvent, render, screen, waitFor } from "@/lib/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { Rail, type RailItem } from "./Rail";
 
@@ -63,7 +63,7 @@ describe("Rail keyboard navigation", () => {
     expect(first).toHaveFocus();
   });
 
-  it("moves focus between rails with ArrowDown and ArrowUp", () => {
+  it("moves focus between rails with ArrowDown and ArrowUp", async () => {
     render(
       <FocusRegionProvider>
         <Rail title="Rail One" items={firstRailItems} regionOrder={1} regionId="rail-one" />
@@ -76,15 +76,28 @@ describe("Rail keyboard navigation", () => {
     const secondOne = screen.getByRole("link", { name: "Second 1" });
     const secondTwo = screen.getByRole("link", { name: "Second 2" });
 
-    firstTwo.focus();
+    fireEvent.focus(firstTwo);
+    await waitFor(() => {
+      expect(firstTwo).toHaveAttribute("tabindex", "0");
+    });
     fireEvent.keyDown(firstTwo, { key: "ArrowDown" });
-    expect(secondTwo).toHaveFocus();
+    await waitFor(() => {
+      expect(secondTwo).toHaveFocus();
+    });
 
     fireEvent.keyDown(secondTwo, { key: "ArrowUp" });
-    expect(firstTwo).toHaveFocus();
+    await waitFor(() => {
+      expect(firstTwo).toHaveFocus();
+    });
 
+    fireEvent.focus(firstOne);
+    await waitFor(() => {
+      expect(firstOne).toHaveAttribute("tabindex", "0");
+    });
     fireEvent.keyDown(firstOne, { key: "ArrowDown" });
-    expect(secondOne).toHaveFocus();
+    await waitFor(() => {
+      expect(secondOne).toHaveFocus();
+    });
   });
 
   it("activates focused item with Space", () => {

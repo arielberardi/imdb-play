@@ -17,6 +17,10 @@ if (
   };
 }
 
+if (typeof window !== "undefined" && !HTMLElement.prototype.scrollIntoView) {
+  HTMLElement.prototype.scrollIntoView = () => {};
+}
+
 // Mock Next.js Image and Link components
 vi.mock("next/image", () => {
   return {
