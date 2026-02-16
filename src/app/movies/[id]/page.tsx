@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
+import { getOptionalUser } from "@/features/auth";
 import { getTitleDetailsAction } from "@/features/catalog";
 import { MediaType } from "@/generated/prisma";
 import logger from "@/lib/logger";
@@ -72,11 +73,17 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
     throw new Error("Failed to load movie details");
   }
 
-  const userState = await getUserTitleState(id);
+  const user = await getOptionalUser();
+  const userState = await getUserTitleState(id, user?.id);
 
   return (
     <main>
-      <AssetDetailsHero details={details} mediaType="movie" userState={userState} />
+      <AssetDetailsHero
+        details={details}
+        mediaType="movie"
+        userState={userState}
+        isAuthenticated={Boolean(user)}
+      />
 
       {details.credits.cast.length > 0 && (
         <Suspense fallback={<CastListSkeleton />}>

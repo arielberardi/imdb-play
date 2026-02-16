@@ -38,6 +38,7 @@ export const WithTrailers: Story = {
     trailers: mockTrailers,
     titleId: "550",
     mediaType: "movie",
+    isAuthenticated: true,
   },
 };
 
@@ -46,6 +47,7 @@ export const WithoutTrailers: Story = {
     trailers: [],
     titleId: "550",
     mediaType: "movie",
+    isAuthenticated: true,
   },
 };
 
@@ -54,5 +56,6 @@ export const SingleTrailer: Story = {
     trailers: [mockTrailers[0]],
     titleId: "550",
     mediaType: "movie",
+    isAuthenticated: true,
   },
 };

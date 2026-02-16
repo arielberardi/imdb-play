@@ -8,7 +8,7 @@ import styles from "./Navbar.module.css";
 
 interface NavbarViewProps {
   user: AuthUser | null;
-  onSignOut?: (formData: FormData) => void | Promise<void>;
+  onSignOut: (formData: FormData) => void | Promise<void>;
 }
 
 export function NavbarView({ user, onSignOut }: NavbarViewProps) {
@@ -53,21 +53,15 @@ export function NavbarView({ user, onSignOut }: NavbarViewProps) {
           {user ? (
             <div className={styles.navbar__authSignedIn}>
               <span className={styles.navbar__authEmail}>{user.email}</span>
-              {onSignOut ? (
-                <form action={onSignOut}>
-                  <Button variant="ghost" size="small" type="submit">
-                    {t("signOut")}
-                  </Button>
-                </form>
-              ) : (
-                <Button variant="ghost" size="small" type="button">
+              <form action={onSignOut}>
+                <Button variant="secondary" size="medium" type="submit">
                   {t("signOut")}
                 </Button>
-              )}
+              </form>
             </div>
           ) : (
             <Link href="/auth/sign-in">
-              <Button variant="ghost" size="small" type="button">
+              <Button variant="primary" size="medium" type="button">
                 {t("signIn")}
               </Button>
             </Link>

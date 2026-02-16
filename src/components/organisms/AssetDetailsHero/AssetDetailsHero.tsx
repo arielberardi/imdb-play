@@ -11,9 +11,15 @@ interface AssetDetailsHeroProps {
   details: TitleDetails;
   mediaType: "movie" | "series";
   userState?: UserTitleState;
+  isAuthenticated?: boolean;
 }
 
-export default function AssetDetailsHero({ details, mediaType, userState }: AssetDetailsHeroProps) {
+export default function AssetDetailsHero({
+  details,
+  mediaType,
+  userState,
+  isAuthenticated = false,
+}: AssetDetailsHeroProps) {
   const t = useTranslations("assetDetails");
   const posterUrl = details.posterPath
     ? details.posterPath.startsWith("http")
@@ -53,6 +59,7 @@ export default function AssetDetailsHero({ details, mediaType, userState }: Asse
             mediaType={mediaType}
             initialIsFavorite={userState?.isFavorite ?? false}
             initialIsInWatchlist={userState?.isInWatchlist ?? false}
+            isAuthenticated={isAuthenticated}
           />
         </div>
       </div>

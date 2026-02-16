@@ -7,6 +7,9 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  args: {
+    onSignOut: () => {},
+  },
   tags: ["autodocs"],
 } satisfies Meta<typeof NavbarView>;
 
@@ -32,6 +35,7 @@ export const LoggedIn: Story = {
         id: "demo-user",
         email: "member@imdbplay.dev",
       }}
+      onSignOut={() => {}}
     />
   ),
 };
@@ -70,7 +74,7 @@ export const WithContent: Story = {
   },
   render: () => (
     <main>
-      <NavbarView user={null} />
+      <NavbarView user={null} onSignOut={() => {}} />
     </main>
   ),
 };

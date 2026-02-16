@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import AssetDetailsHero from "@/components/organisms/AssetDetailsHero";
 import CastList from "@/components/organisms/CastList";
 import EpisodeSelector from "@/components/organisms/EpisodeSelector";
+import { getOptionalUser } from "@/features/auth";
 import { getTitleDetailsAction } from "@/features/catalog";
 import { MediaType } from "@/generated/prisma";
 import logger from "@/lib/logger";
@@ -73,11 +74,17 @@ export default async function SeriesDetailPage({ params }: SeriesDetailPageProps
     throw new Error("Failed to load series details");
   }
 
-  const userState = await getUserTitleState(id);
+  const user = await getOptionalUser();
+  const userState = await getUserTitleState(id, user?.id);
 
   return (
     <main>
-      <AssetDetailsHero details={details} mediaType="series" userState={userState} />
+      <AssetDetailsHero
+        details={details}
+        mediaType="series"
+        userState={userState}
+        isAuthenticated={Boolean(user)}
+      />
 
       {details.seasons && details.seasons.length > 0 && (
         <Suspense fallback={<EpisodeSelectorSkeleton />}>
