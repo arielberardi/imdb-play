@@ -20,13 +20,12 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
     <div className={styles.episodeCard}>
       <div className={styles.still}>
         {stillUrl && !hasImageError ? (
-          <Image
+          <img
             src={stillUrl}
             alt={episode.name}
             width={300}
             height={169}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
-            quality={75}
             className={styles.image}
             onError={() => setHasImageError(true)}
           />

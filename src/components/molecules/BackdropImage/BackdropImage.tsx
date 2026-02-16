@@ -23,14 +23,11 @@ export function BackdropImage({ backdropPath, title }: BackdropImageProps) {
 
   return (
     <div className={styles.backdrop}>
-      <Image
+      <img
         src={imageUrl}
         alt={t("backdropAlt", { title })}
-        fill
-        priority
         className={styles.image}
         sizes="100vw"
-        quality={85}
       />
       <div className={styles.gradient} />
     </div>

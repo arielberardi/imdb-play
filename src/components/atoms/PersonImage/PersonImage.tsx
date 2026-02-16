@@ -33,13 +33,12 @@ export function PersonImage({ profilePath, name, size = 150 }: PersonImageProps)
 
   return (
     <div className={styles.imageContainer} style={{ width: size, height: size }}>
-      <Image
+      <img
         src={imageUrl}
         alt={name}
         width={size}
         height={size}
         sizes={`${size}px`}
-        quality={75}
         className={styles.image}
         onError={() => setHasError(true)}
       />

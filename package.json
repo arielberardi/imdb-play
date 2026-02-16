@@ -1,6 +1,7 @@
 {
   "name": "imdb-play",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -27,6 +28,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
+    "@prisma/client-runtime-utils": "^7.4.0",
     "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -74,7 +76,7 @@
     "playwright": "^1.58.2",
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "prisma": "^7.4.0",
+    "prisma": "^7.0.0",
     "storybook": "^10.2.8",
     "typescript": "^5",
     "vite": "^7.3.1",

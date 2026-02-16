@@ -23,11 +23,11 @@ function asUtcYearDate(year) {
 }
 
 function buildPosterUrl(titleId) {
-  return `https://placehold.co/500x750/1f1f1f/e5e5e5?text=${encodeURIComponent(titleId)}`;
+  return `https://placehold.co/500x750/1f1f1f/e5e5e5/png?text=${encodeURIComponent(titleId)}`;
 }
 
 function buildBackdropUrl(titleId) {
-  return `https://placehold.co/1280x720/121212/e5e5e5?text=${encodeURIComponent(titleId)}`;
+  return `https://placehold.co/1280x720/121212/e5e5e5/png?text=${encodeURIComponent(titleId)}`;
 }
 
 function toUniqueByTitle(items) {
