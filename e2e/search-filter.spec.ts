@@ -11,7 +11,6 @@ test.describe("search and filtering", () => {
 
     const input = page.getByPlaceholder("Search for movies and TV shows...");
     await input.fill("matrix");
-    await page.waitForTimeout(400);
 
     await expect(page).toHaveURL(/\/search\?q=matrix/);
   });

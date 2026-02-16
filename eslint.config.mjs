@@ -19,6 +19,11 @@ const eslintConfig = defineConfig([
     files: ["**/*.test.{ts,tsx}"],
     extends: [vitest.configs.recommended],
   },
+  {
+    rules: {
+      "@next/next/no-img-element": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

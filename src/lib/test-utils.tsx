@@ -30,15 +30,11 @@ vi.mock("next/image", () => {
     }) => {
       const { src, alt, fill, className, ...rest } = props;
       if (fill) {
-        /* eslint-disable @next/next/no-img-element */
         return (
           <img src={src} alt={alt} className={className} style={{ objectFit: "cover" }} {...rest} />
         );
-        /* eslint-enable @next/next/no-img-element */
       }
-      /* eslint-disable @next/next/no-img-element */
       return <img src={src} alt={alt} className={className} {...rest} />;
-      /* eslint-enable @next/next/no-img-element */
     },
   };
 });
