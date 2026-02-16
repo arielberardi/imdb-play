@@ -2,30 +2,64 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.tabsScroller {
+  position: relative;
+}
+
 .tabsContainer {
   display: flex;
   gap: var(--spacing-sm);
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
-  padding-bottom: var(--spacing-sm);
+  padding: 0 var(--spacing-sm) var(--spacing-sm);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
-  /* Custom scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+.tabsContainerWithNav {
+  padding: 0 calc(var(--spacing-sm) + 2.5rem) var(--spacing-sm);
 }
 
 .tabsContainer::-webkit-scrollbar {
-  height: 6px;
+  display: none;
 }
 
-.tabsContainer::-webkit-scrollbar-track {
-  background: transparent;
+.navButton {
+  position: absolute;
+  top: calc(50% - var(--spacing-sm));
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
-.tabsContainer::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 3px;
+.navButton:hover {
+  background-color: rgba(0, 0, 0, 0.92);
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.navButtonLeft {
+  left: 0;
+}
+
+.navButtonRight {
+  right: 0;
 }
 
 .tab {
@@ -62,4 +96,19 @@
 .tab.active:hover {
   background-color: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .tabsContainer {
+    padding: 0 var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .tabsContainerWithNav {
+    padding: 0 calc(var(--spacing-xs) + 2.25rem) var(--spacing-sm);
+  }
+
+  .navButton {
+    width: 2rem;
+    height: 2rem;
+  }
 }

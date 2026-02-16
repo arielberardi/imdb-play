@@ -23,4 +23,18 @@ describe("CastList", () => {
     expect(screen.getByText("Actor One")).toBeInTheDocument();
     expect(screen.getByText(/Hero/)).toBeInTheDocument();
   });
+
+  it("hides navigation arrows when cast list cannot scroll", () => {
+    render(
+      <CastList
+        cast={[
+          { id: "1", name: "Actor One", profilePath: null, character: "Hero" },
+          { id: "2", name: "Actor Two", profilePath: null },
+        ]}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Scroll left" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Scroll right" })).not.toBeInTheDocument();
+  });
 });

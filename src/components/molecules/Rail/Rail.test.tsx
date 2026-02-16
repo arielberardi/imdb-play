@@ -116,4 +116,59 @@ describe("Rail keyboard navigation", () => {
 
     expect(clickSpy).toHaveBeenCalled();
   });
+
+  it("hides navigation arrows when content cannot scroll", () => {
+    render(
+      <FocusRegionProvider>
+        <Rail title="Rail One" items={firstRailItems} regionOrder={1} regionId="rail-one" />
+      </FocusRegionProvider>,
+    );
+
+    expect(screen.queryByRole("button", { name: "Scroll left" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Scroll right" })).not.toBeInTheDocument();
+  });
+
+  it("shows only the valid scroll direction arrow", async () => {
+    render(
+      <FocusRegionProvider>
+        <Rail title="Rail One" items={firstRailItems} regionOrder={1} regionId="rail-one" />
+      </FocusRegionProvider>,
+    );
+
+    const container = screen.getByTestId("rail-one-scroll-container");
+
+    Object.defineProperty(container, "clientWidth", {
+      configurable: true,
+      value: 200,
+    });
+    Object.defineProperty(container, "scrollWidth", {
+      configurable: true,
+      value: 500,
+    });
+    Object.defineProperty(container, "scrollLeft", {
+      configurable: true,
+      writable: true,
+      value: 0,
+    });
+
+    fireEvent(window, new Event("resize"));
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "Scroll left" })).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Scroll right" })).toBeInTheDocument();
+    });
+
+    container.scrollLeft = 150;
+    fireEvent.scroll(container);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Scroll left" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Scroll right" })).toBeInTheDocument();
+    });
+
+    container.scrollLeft = 300;
+    fireEvent.scroll(container);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Scroll left" })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Scroll right" })).not.toBeInTheDocument();
+    });
+  });
 });

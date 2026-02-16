@@ -37,7 +37,9 @@
     "a11y": {
       "watchProgress": "Watch progress",
       "favorite": "Favorite",
-      "rating": "Rating"
+      "rating": "Rating",
+      "scrollLeft": "Scroll left",
+      "scrollRight": "Scroll right"
     }
   },
   "home": {

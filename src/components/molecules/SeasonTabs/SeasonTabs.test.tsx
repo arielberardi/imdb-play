@@ -77,4 +77,11 @@ describe("SeasonTabs", () => {
     expect(screen.getByRole("tab", { name: "Season 1" })).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Season 2" })).not.toBeInTheDocument();
   });
+
+  it("hides navigation arrows when seasons cannot scroll", () => {
+    render(<SeasonTabs seasons={mockSeasons} selectedSeasonNumber={1} onSeasonChange={() => {}} />);
+
+    expect(screen.queryByRole("button", { name: "Scroll left" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Scroll right" })).not.toBeInTheDocument();
+  });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/atoms/Icon";
 import { AssetCard } from "@/components/molecules/AssetCard";
 import { useFocusRegion } from "@/lib/a11y/focus-region";
 import {
@@ -10,7 +11,10 @@ import {
   isArrowUp,
 } from "@/lib/a11y/keymap";
 import { useRovingTabindex } from "@/lib/a11y/roving-tabindex";
+import { useHorizontalScroll } from "@/lib/a11y/use-horizontal-scroll";
 import { clsx } from "clsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef, type KeyboardEvent } from "react";
 import styles from "./Rail.module.css";
 
@@ -52,7 +56,12 @@ export function Rail({
   regionOrder = 0,
   enableKeyboardNav = true,
 }: RailProps) {
+  const t = useTranslations("common.a11y");
   const anchorRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const { containerRef, canScrollLeft, canScrollRight, scrollLeft, scrollRight } =
+    useHorizontalScroll();
+  const showNavigation = canScrollLeft || canScrollRight;
+
   const stableRegionId = useMemo(
     () => regionId ?? `rail-${slugify(title)}-${regionOrder}`,
     [regionId, regionOrder, title],
@@ -140,29 +149,60 @@ export function Rail({
       data-region-id={stableRegionId}
     >
       <h2 className={styles.rail__title}>{title}</h2>
-      <div className={styles.rail__container}>
-        {items.map((item, index) => (
-          <AssetCard
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            imageUrl={item.imageUrl}
-            rating={item.rating}
-            year={item.year}
-            href={item.href}
-            mediaType={item.mediaType}
-            showProgress={item.showProgress}
-            progressPercent={item.progressPercent}
-            isFavorite={item.isFavorite}
-            linkRef={(element) => {
-              anchorRefs.current[index] = element;
-            }}
-            linkTabIndex={enableKeyboardNav ? getItemTabIndex(index) : 0}
-            onLinkFocus={() => onItemFocus(index)}
-            onLinkMouseEnter={() => setActiveIndex(index)}
-            onLinkKeyDown={onItemKeyDown}
-          />
-        ))}
+      <div className={styles.rail__scroller}>
+        {showNavigation && canScrollLeft && (
+          <button
+            type="button"
+            className={clsx(styles.rail__navButton, styles["rail__navButton--left"])}
+            onClick={scrollLeft}
+            aria-label={t("scrollLeft")}
+          >
+            <Icon icon={ChevronLeft} size="small" />
+          </button>
+        )}
+
+        <div
+          ref={containerRef}
+          className={clsx(
+            styles.rail__container,
+            showNavigation && styles["rail__container--withNav"],
+          )}
+          data-testid={`${stableRegionId}-scroll-container`}
+        >
+          {items.map((item, index) => (
+            <AssetCard
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              imageUrl={item.imageUrl}
+              rating={item.rating}
+              year={item.year}
+              href={item.href}
+              mediaType={item.mediaType}
+              showProgress={item.showProgress}
+              progressPercent={item.progressPercent}
+              isFavorite={item.isFavorite}
+              linkRef={(element) => {
+                anchorRefs.current[index] = element;
+              }}
+              linkTabIndex={enableKeyboardNav ? getItemTabIndex(index) : 0}
+              onLinkFocus={() => onItemFocus(index)}
+              onLinkMouseEnter={() => setActiveIndex(index)}
+              onLinkKeyDown={onItemKeyDown}
+            />
+          ))}
+        </div>
+
+        {showNavigation && canScrollRight && (
+          <button
+            type="button"
+            className={clsx(styles.rail__navButton, styles["rail__navButton--right"])}
+            onClick={scrollRight}
+            aria-label={t("scrollRight")}
+          >
+            <Icon icon={ChevronRight} size="small" />
+          </button>
+        )}
       </div>
     </section>
   );
