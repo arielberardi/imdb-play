@@ -3,5 +3,5 @@ import { z } from "zod";
 
 export const addFavoriteSchema = z.object({
   titleId: z.string().trim().min(1, "Title id is required"),
-  mediaType: z.nativeEnum(MediaType),
+  mediaType: z.enum(MediaType),
 });

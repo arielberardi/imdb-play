@@ -1,19 +1,65 @@
 "use server";
 
-import { AuthRequiredError } from "@/features/auth/errors";
-import { requireUser } from "@/features/auth/services/session.service";
 import type {
   AddToWatchlistInput,
   WatchlistActionResult,
   WatchlistItem,
 } from "@/features/watchlist/types";
 import { addToWatchlistSchema } from "@/features/watchlist/validators";
+import { authRateLimitedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import {
   addToWatchlist,
   listUserWatchlist,
   removeFromWatchlist,
 } from "./services/watchlist.service";
+
+const removeFromWatchlistSchema = z.string().trim().min(1, "Title id is required.");
+
+const addToWatchlistSafeAction = authRateLimitedAction({
+  keyPrefix: "watchlist:add",
+  limit: 20,
+  windowMs: 60_000,
+})
+  .inputSchema(addToWatchlistSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    await addToWatchlist(ctx.user.id, parsedInput.titleId, parsedInput.mediaType);
+
+    revalidatePath("/");
+    revalidatePath(`/movies/${parsedInput.titleId}`);
+    revalidatePath(`/series/${parsedInput.titleId}`);
+
+    return {
+      success: true,
+    } satisfies WatchlistActionResult;
+  });
+
+const removeFromWatchlistSafeAction = authRateLimitedAction({
+  keyPrefix: "watchlist:remove",
+  limit: 20,
+  windowMs: 60_000,
+})
+  .inputSchema(removeFromWatchlistSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    await removeFromWatchlist(ctx.user.id, parsedInput);
+
+    revalidatePath("/");
+    revalidatePath(`/movies/${parsedInput}`);
+    revalidatePath(`/series/${parsedInput}`);
+
+    return {
+      success: true,
+    } satisfies WatchlistActionResult;
+  });
+
+const listWatchlistSafeAction = authRateLimitedAction({
+  keyPrefix: "watchlist:list",
+  limit: 60,
+  windowMs: 60_000,
+}).action(async ({ ctx }) => {
+  return listUserWatchlist(ctx.user.id);
+});
 
 export async function addToWatchlistAction(
   input: AddToWatchlistInput,
@@ -26,71 +72,87 @@ export async function addToWatchlistAction(
     };
   }
 
-  try {
-    const user = await requireUser();
-    await addToWatchlist(user.id, parsed.data.titleId, parsed.data.mediaType);
+  const result = await addToWatchlistSafeAction(input);
 
-    revalidatePath("/");
-    revalidatePath(`/movies/${parsed.data.titleId}`);
-    revalidatePath(`/series/${parsed.data.titleId}`);
+  if (result.data) {
+    return result.data;
+  }
 
-    return {
-      success: true,
-    };
-  } catch (error) {
-    if (error instanceof AuthRequiredError) {
-      return {
-        success: false,
-        message: "Please sign in to manage your watchlist.",
-      };
-    }
-
+  if (result.validationErrors) {
     return {
       success: false,
-      message: "Unable to update watchlist right now.",
+      message: result.validationErrors.fieldErrors.titleId?.[0] ?? "Invalid watchlist request.",
     };
   }
+
+  if (result.serverError === "UNAUTHORIZED") {
+    return {
+      success: false,
+      message: "Please sign in to manage your watchlist.",
+    };
+  }
+
+  if (result.serverError === "RATE_LIMITED") {
+    return {
+      success: false,
+      message: "Too many watchlist requests. Please try again shortly.",
+    };
+  }
+
+  return {
+    success: false,
+    message: "Unable to update watchlist right now.",
+  };
 }
 
 export async function removeFromWatchlistAction(titleId: string): Promise<WatchlistActionResult> {
-  if (!titleId || titleId.trim().length === 0) {
+  const parsed = removeFromWatchlistSchema.safeParse(titleId);
+  if (!parsed.success) {
     return {
       success: false,
-      message: "Title id is required.",
+      message: parsed.error.flatten().formErrors[0] ?? "Title id is required.",
     };
   }
 
-  try {
-    const user = await requireUser();
-    await removeFromWatchlist(user.id, titleId);
+  const result = await removeFromWatchlistSafeAction(titleId);
 
-    revalidatePath("/");
-    revalidatePath(`/movies/${titleId}`);
-    revalidatePath(`/series/${titleId}`);
+  if (result.data) {
+    return result.data;
+  }
 
-    return {
-      success: true,
-    };
-  } catch (error) {
-    if (error instanceof AuthRequiredError) {
-      return {
-        success: false,
-        message: "Please sign in to manage your watchlist.",
-      };
-    }
-
+  if (result.validationErrors) {
     return {
       success: false,
-      message: "Unable to update watchlist right now.",
+      message: result.validationErrors.formErrors[0] ?? "Title id is required.",
     };
   }
+
+  if (result.serverError === "UNAUTHORIZED") {
+    return {
+      success: false,
+      message: "Please sign in to manage your watchlist.",
+    };
+  }
+
+  if (result.serverError === "RATE_LIMITED") {
+    return {
+      success: false,
+      message: "Too many watchlist requests. Please try again shortly.",
+    };
+  }
+
+  return {
+    success: false,
+    message: "Unable to update watchlist right now.",
+  };
 }
 
 export async function listWatchlistAction(): Promise<WatchlistItem[]> {
-  try {
-    const user = await requireUser();
-    return await listUserWatchlist(user.id);
-  } catch {
-    return [];
+  const result = await listWatchlistSafeAction();
+
+  if (result.data) {
+    return result.data;
   }
+
+  return [];
 }
