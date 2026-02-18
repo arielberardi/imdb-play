@@ -1,9 +1,61 @@
+.wrapper {
+  position: relative;
+}
+
 .container {
   display: flex;
   gap: 0.75rem;
   padding: 1.5rem 0;
   overflow-x: auto;
-  scrollbar-width: thin;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+.containerWithNav {
+  padding: 1.5rem calc(2.25rem + 0.75rem);
+}
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.navButton:hover {
+  background-color: rgba(0, 0, 0, 0.92);
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.navButtonLeft {
+  left: 0;
+}
+
+.navButtonRight {
+  right: 0;
 }
 
 .chip {
@@ -37,4 +89,15 @@
 .chip:focus-visible {
   outline: 2px solid var(--focus-color, #fff);
   outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .containerWithNav {
+    padding: 1.5rem calc(2rem + 0.5rem);
+  }
+
+  .navButton {
+    width: 2rem;
+    height: 2rem;
+  }
 }

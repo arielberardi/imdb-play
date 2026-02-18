@@ -3,6 +3,7 @@ import { Navbar } from "@/components/organisms/Navbar";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
+import { ScrollToTopOnRouteChange } from "./ScrollToTopOnRouteChange";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,6 +26,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <NextIntlClientProvider messages={messages}>
+          <ScrollToTopOnRouteChange />
           <Navbar />
           <main>{children}</main>
           <Footer />
