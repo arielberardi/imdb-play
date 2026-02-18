@@ -21,7 +21,7 @@ enum TitleType {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
@@ -34,7 +34,7 @@ model User {
 }
 
 model Title {
-  id               String      @id
+  id               Int       @id @default(autoincrement())
   titleType        TitleType
   title            String
   originalTitle    String
@@ -44,13 +44,13 @@ model Title {
   posterUrl        String?
   backdropUrl      String?
   voteAverage      Float?
-  voteCount        Int         @default(0)
-  popularity       Float       @default(0)
+  voteCount        Int       @default(0)
+  popularity       Float     @default(0)
   tagline          String?
   status           String?
-  originalLanguage String?     @default("en")
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  originalLanguage String?   @default("en")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   genres   TitleGenre[]
   cast     TitleCast[]
@@ -68,17 +68,17 @@ model Title {
 }
 
 model Genre {
-  id        Int         @id
+  id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   titles TitleGenre[]
 }
 
 model TitleGenre {
-  id        String   @id @default(cuid())
-  titleId   String
+  id        Int      @id @default(autoincrement())
+  titleId   Int
   genreId   Int
   createdAt DateTime @default(now())
 
@@ -90,7 +90,7 @@ model TitleGenre {
 }
 
 model Person {
-  id          String   @id
+  id          Int      @id @default(autoincrement())
   name        String
   profilePath String?
   createdAt   DateTime @default(now())
@@ -100,12 +100,12 @@ model Person {
 }
 
 model TitleCast {
-  id          String   @id @default(cuid())
-  titleId     String
-  personId    String
-  character   String?
-  castOrder   Int?
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  titleId   Int
+  personId  Int
+  character String?
+  castOrder Int?
+  createdAt DateTime @default(now())
 
   title  Title  @relation(fields: [titleId], references: [id], onDelete: Cascade)
   person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
@@ -115,8 +115,8 @@ model TitleCast {
 }
 
 model Trailer {
-  id        String   @id
-  titleId   String
+  id        Int      @id @default(autoincrement())
+  titleId   Int
   key       String
   name      String
   site      String
@@ -130,16 +130,16 @@ model Trailer {
 }
 
 model Season {
-  id            String    @id
-  titleId       String
-  seasonNumber  Int
-  name          String
-  overview      String
-  posterPath    String?
-  episodeCount  Int       @default(0)
-  airDate       DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           Int       @id @default(autoincrement())
+  titleId      Int
+  seasonNumber Int
+  name         String
+  overview     String
+  posterPath   String?
+  episodeCount Int       @default(0)
+  airDate      DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   title    Title     @relation(fields: [titleId], references: [id], onDelete: Cascade)
   episodes Episode[]
@@ -149,8 +149,8 @@ model Season {
 }
 
 model Episode {
-  id            String   @id
-  seasonId      String
+  id            Int       @id @default(autoincrement())
+  seasonId      Int
   episodeNumber Int
   name          String
   overview      String
@@ -158,9 +158,9 @@ model Episode {
   airDate       DateTime?
   runtime       Int?
   voteAverage   Float?
-  voteCount     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  voteCount     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
 
@@ -169,8 +169,8 @@ model Episode {
 }
 
 model Session {
-  id        String    @id @default(cuid())
-  userId    String
+  id        Int       @id @default(autoincrement())
+  userId    Int
   token     String    @unique
   issuedAt  DateTime  @default(now())
   expiresAt DateTime
@@ -184,9 +184,9 @@ model Session {
 }
 
 model Favorite {
-  id        String    @id @default(cuid())
-  userId    String
-  titleId   String
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  titleId   Int
   mediaType MediaType
   createdAt DateTime  @default(now())
 
@@ -199,9 +199,9 @@ model Favorite {
 }
 
 model Watchlist {
-  id        String    @id @default(cuid())
-  userId    String
-  titleId   String
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  titleId   Int
   mediaType MediaType
   createdAt DateTime  @default(now())
 
@@ -214,9 +214,9 @@ model Watchlist {
 }
 
 model ContinueWatching {
-  id              String    @id @default(cuid())
-  userId          String
-  titleId         String
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  titleId         Int
   mediaType       MediaType
   progressSeconds Int
   durationSeconds Int
