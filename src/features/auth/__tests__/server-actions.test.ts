@@ -44,7 +44,7 @@ describe("server-actions", () => {
 
   it("returns duplicate email error on sign up", async () => {
     vi.mocked(findUserByEmail).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
       passwordHash: "hash",
       createdAt: new Date(),
@@ -65,7 +65,7 @@ describe("server-actions", () => {
     vi.mocked(findUserByEmail).mockResolvedValue(null);
     vi.mocked(hashPassword).mockResolvedValue("hash");
     vi.mocked(createUser).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     });
 
@@ -74,7 +74,7 @@ describe("server-actions", () => {
       password: "password123",
     });
 
-    expect(createSession).toHaveBeenCalledWith("user-1");
+    expect(createSession).toHaveBeenCalledWith(1);
     expect(redirect).toHaveBeenCalledWith("/");
   });
 
@@ -92,7 +92,7 @@ describe("server-actions", () => {
 
   it("creates session and redirects on successful sign in", async () => {
     vi.mocked(verifyUserCredentials).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     });
 
@@ -101,7 +101,7 @@ describe("server-actions", () => {
       password: "password123",
     });
 
-    expect(createSession).toHaveBeenCalledWith("user-1");
+    expect(createSession).toHaveBeenCalledWith(1);
     expect(redirect).toHaveBeenCalledWith("/");
   });
 

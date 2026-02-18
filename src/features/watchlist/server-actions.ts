@@ -15,7 +15,10 @@ import {
   removeFromWatchlist,
 } from "./services/watchlist.service";
 
-const removeFromWatchlistSchema = z.string().trim().min(1, "Title id is required.");
+const removeFromWatchlistSchema = z
+  .string()
+  .trim()
+  .regex(/^\d+$/, "Title id must be a positive integer.");
 
 const addToWatchlistSafeAction = authRateLimitedAction({
   keyPrefix: "watchlist:add",

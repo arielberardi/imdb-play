@@ -2,6 +2,7 @@ import { getOptionalUser } from "@/features/auth";
 import { isFavorite } from "@/features/favorites/services/favorites.service";
 import { getProgress } from "@/features/progress/services/progress.service";
 import { isInWatchlist } from "@/features/watchlist/services/watchlist.service";
+import { parsePositiveIntId } from "@/lib/ids";
 
 export interface UserTitleState {
   isFavorite: boolean;
@@ -13,7 +14,19 @@ export interface UserTitleState {
   } | null;
 }
 
-export async function getUserTitleState(titleId: string, userId?: string): Promise<UserTitleState> {
+export async function getUserTitleState(
+  titleId: string,
+  userId?: string | number,
+): Promise<UserTitleState> {
+  const parsedTitleId = parsePositiveIntId(titleId);
+  if (!parsedTitleId) {
+    return {
+      isFavorite: false,
+      isInWatchlist: false,
+      progress: null,
+    };
+  }
+
   let resolvedUserId = userId;
 
   if (!resolvedUserId) {
@@ -30,9 +43,9 @@ export async function getUserTitleState(titleId: string, userId?: string): Promi
   }
 
   const [favorite, watchlist, progress] = await Promise.all([
-    isFavorite(resolvedUserId, titleId),
-    isInWatchlist(resolvedUserId, titleId),
-    getProgress(resolvedUserId, titleId),
+    isFavorite(resolvedUserId, parsedTitleId),
+    isInWatchlist(resolvedUserId, parsedTitleId),
+    getProgress(resolvedUserId, parsedTitleId),
   ]);
 
   return {

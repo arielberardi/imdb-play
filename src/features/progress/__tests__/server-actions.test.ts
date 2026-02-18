@@ -46,7 +46,7 @@ describe("progress server-actions", () => {
     vi.mocked(requireUser).mockRejectedValue(new AuthRequiredError());
 
     const result = await upsertProgressAction({
-      titleId: "tt1",
+      titleId: "1",
       mediaType: MediaType.MOVIE,
       progressSeconds: 10,
       durationSeconds: 100,
@@ -56,22 +56,22 @@ describe("progress server-actions", () => {
   });
 
   it("upserts progress and revalidates", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
 
     const result = await upsertProgressAction({
-      titleId: "tt1",
+      titleId: "1",
       mediaType: MediaType.MOVIE,
       progressSeconds: 10,
       durationSeconds: 100,
     });
 
     expect(result).toEqual({ success: true });
-    expect(upsertProgress).toHaveBeenCalledWith("user-1", "tt1", MediaType.MOVIE, 10, 100);
+    expect(upsertProgress).toHaveBeenCalledWith(1, "1", MediaType.MOVIE, 10, 100);
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("lists continue watching and falls back to empty", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
     vi.mocked(listContinueWatching).mockResolvedValue([]);
 
     await expect(listContinueWatchingAction()).resolves.toEqual([]);
@@ -83,15 +83,15 @@ describe("progress server-actions", () => {
   it("rejects blank remove input", async () => {
     const result = await removeProgressAction(" ");
 
-    expect(result).toEqual({ success: false, message: "Title id is required." });
+    expect(result).toEqual({ success: false, message: "Title id must be a positive integer." });
   });
 
   it("removes progress", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
 
-    const result = await removeProgressAction("tt1");
+    const result = await removeProgressAction("1");
 
     expect(result).toEqual({ success: true });
-    expect(removeProgress).toHaveBeenCalledWith("user-1", "tt1");
+    expect(removeProgress).toHaveBeenCalledWith(1, "1");
   });
 });

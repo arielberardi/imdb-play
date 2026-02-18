@@ -36,38 +36,38 @@ describe("favorites server-actions", () => {
   it("returns auth message for add when unauthenticated", async () => {
     vi.mocked(requireUser).mockRejectedValue(new AuthRequiredError());
 
-    const result = await addFavoriteAction({ titleId: "tt1", mediaType: MediaType.MOVIE });
+    const result = await addFavoriteAction({ titleId: "1", mediaType: MediaType.MOVIE });
 
     expect(result).toEqual({ success: false, message: "Please sign in to save favorites." });
   });
 
   it("adds favorite and revalidates paths", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
 
-    const result = await addFavoriteAction({ titleId: "tt1", mediaType: MediaType.MOVIE });
+    const result = await addFavoriteAction({ titleId: "1", mediaType: MediaType.MOVIE });
 
     expect(result).toEqual({ success: true });
-    expect(addFavorite).toHaveBeenCalledWith("user-1", "tt1", MediaType.MOVIE);
+    expect(addFavorite).toHaveBeenCalledWith(1, "1", MediaType.MOVIE);
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("returns validation error for remove with blank id", async () => {
     const result = await removeFavoriteAction("   ");
 
-    expect(result).toEqual({ success: false, message: "Title id is required." });
+    expect(result).toEqual({ success: false, message: "Title id must be a positive integer." });
   });
 
   it("returns generic remove error", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
     vi.mocked(removeFavorite).mockRejectedValue(new Error("db"));
 
-    const result = await removeFavoriteAction("tt1");
+    const result = await removeFavoriteAction("1");
 
     expect(result).toEqual({ success: false, message: "Unable to remove favorite right now." });
   });
 
   it("lists favorites and falls back to empty array", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
     vi.mocked(listUserFavorites).mockResolvedValue([]);
 
     await expect(listFavoritesAction()).resolves.toEqual([]);

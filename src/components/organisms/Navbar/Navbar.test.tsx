@@ -19,7 +19,7 @@ describe("Navbar", () => {
   });
 
   it("renders user email when signed in", async () => {
-    vi.mocked(getOptionalUser).mockResolvedValue({ id: "user-1", email: "user@example.com" });
+    vi.mocked(getOptionalUser).mockResolvedValue({ id: 1, email: "user@example.com" });
 
     render(await Navbar());
 

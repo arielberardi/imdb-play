@@ -11,7 +11,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { addFavorite, listUserFavorites, removeFavorite } from "./services/favorites.service";
 
-const removeFavoriteSchema = z.string().trim().min(1, "Title id is required.");
+const removeFavoriteSchema = z
+  .string()
+  .trim()
+  .regex(/^\d+$/, "Title id must be a positive integer.");
 
 const addFavoriteSafeAction = authRateLimitedAction({
   keyPrefix: "favorites:add",

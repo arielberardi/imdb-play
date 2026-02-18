@@ -19,7 +19,7 @@ vi.mock("../password.service", () => ({
 describe("auth.service", () => {
   it("finds user by email", async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
       passwordHash: "hash",
       createdAt: new Date(),
@@ -36,7 +36,7 @@ describe("auth.service", () => {
 
   it("creates a user with selected fields", async () => {
     vi.mocked(prisma.user.create).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     } as never);
 
@@ -46,7 +46,7 @@ describe("auth.service", () => {
     });
 
     expect(user).toEqual({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     });
   });
@@ -64,7 +64,7 @@ describe("auth.service", () => {
 
   it("returns user when credentials are valid", async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
       passwordHash: "hash",
       createdAt: new Date(),
@@ -78,7 +78,7 @@ describe("auth.service", () => {
     });
 
     expect(result).toEqual({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     });
   });

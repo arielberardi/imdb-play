@@ -44,38 +44,38 @@ describe("watchlist server-actions", () => {
   it("returns auth message for add", async () => {
     vi.mocked(requireUser).mockRejectedValue(new AuthRequiredError());
 
-    const result = await addToWatchlistAction({ titleId: "tt1", mediaType: MediaType.MOVIE });
+    const result = await addToWatchlistAction({ titleId: "1", mediaType: MediaType.MOVIE });
 
     expect(result).toEqual({ success: false, message: "Please sign in to manage your watchlist." });
   });
 
   it("adds watchlist item and revalidates", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
 
-    const result = await addToWatchlistAction({ titleId: "tt1", mediaType: MediaType.SERIES });
+    const result = await addToWatchlistAction({ titleId: "1", mediaType: MediaType.SERIES });
 
     expect(result).toEqual({ success: true });
-    expect(addToWatchlist).toHaveBeenCalledWith("user-1", "tt1", MediaType.SERIES);
+    expect(addToWatchlist).toHaveBeenCalledWith(1, "1", MediaType.SERIES);
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("rejects blank remove input", async () => {
     const result = await removeFromWatchlistAction(" ");
 
-    expect(result).toEqual({ success: false, message: "Title id is required." });
+    expect(result).toEqual({ success: false, message: "Title id must be a positive integer." });
   });
 
   it("removes watchlist item", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
 
-    const result = await removeFromWatchlistAction("tt1");
+    const result = await removeFromWatchlistAction("1");
 
     expect(result).toEqual({ success: true });
-    expect(removeFromWatchlist).toHaveBeenCalledWith("user-1", "tt1");
+    expect(removeFromWatchlist).toHaveBeenCalledWith(1, "1");
   });
 
   it("lists watchlist and falls back to empty", async () => {
-    vi.mocked(requireUser).mockResolvedValue({ id: "user-1", email: "x@y.com" });
+    vi.mocked(requireUser).mockResolvedValue({ id: 1, email: "x@y.com" });
     vi.mocked(listUserWatchlist).mockResolvedValue([]);
 
     await expect(listWatchlistAction()).resolves.toEqual([]);

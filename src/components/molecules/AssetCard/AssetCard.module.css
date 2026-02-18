@@ -30,6 +30,8 @@
 
 .assetCard__image {
   object-fit: cover;
+  aspect-ratio: 2 / 3;
+  height: 100%;
 }
 
 .assetCard__badges {

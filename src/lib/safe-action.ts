@@ -100,7 +100,7 @@ export function authRateLimitedAction(options: RateLimitedActionOptions) {
 
     await enforceRateLimit({
       keyPrefix: options.keyPrefix,
-      key: authCtx.user.id,
+      key: String(authCtx.user.id),
       limit: options.limit,
       windowMs: options.windowMs,
     });

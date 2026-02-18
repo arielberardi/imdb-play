@@ -4,7 +4,6 @@ import { TitleMetadata } from "@/components/molecules/TitleMetadata";
 import type { TitleDetails } from "@/features/catalog";
 import type { UserTitleState } from "@/lib/personalized-content/user-state";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import styles from "./AssetDetailsHero.module.css";
 
 interface AssetDetailsHeroProps {
@@ -34,14 +33,12 @@ export default function AssetDetailsHero({
       <div className={styles.content}>
         <div className={styles.poster}>
           {posterUrl ? (
-            <Image
+            <img
               src={posterUrl}
               alt={t("posterAlt", { title: details.title })}
               width={300}
               height={450}
-              priority
               sizes="(max-width: 768px) 45vw, 300px"
-              quality={85}
               className={styles.posterImage}
             />
           ) : (

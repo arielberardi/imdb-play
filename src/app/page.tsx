@@ -79,7 +79,7 @@ export default async function Home() {
   );
 }
 
-async function ContinueWatchingRail({ userId, title }: { userId: string; title: string }) {
+async function ContinueWatchingRail({ userId, title }: { userId: number; title: string }) {
   const progress = await listContinueWatching(userId);
   if (progress.length === 0) {
     return null;
@@ -93,7 +93,7 @@ async function ContinueWatchingRail({ userId, title }: { userId: string; title: 
   return <Rail title={title} items={items} regionOrder={1} regionId="home-continue" />;
 }
 
-async function FavoritesRail({ userId, title }: { userId: string; title: string }) {
+async function FavoritesRail({ userId, title }: { userId: number; title: string }) {
   const favorites = await listUserFavorites(userId);
   if (favorites.length === 0) {
     return null;

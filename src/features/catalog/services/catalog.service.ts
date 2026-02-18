@@ -1,4 +1,5 @@
 import { MediaType, TitleType, type Prisma } from "@/generated/prisma";
+import { parsePositiveIntId } from "@/lib/ids";
 import prisma from "@/lib/prisma";
 import type { Episode, Genre, PaginatedResponse, Title, TitleDetails, Trailer } from "../types";
 
@@ -9,7 +10,7 @@ function mapTitleTypeToMediaType(titleType: TitleType): MediaType {
 }
 
 function mapTitleRowToTitle(row: {
-  id: string;
+  id: number;
   titleType: TitleType;
   title: string;
   originalTitle: string;
@@ -24,7 +25,7 @@ function mapTitleRowToTitle(row: {
   genres?: Array<{ genre: Genre }>;
 }): Title {
   return {
-    id: row.id,
+    id: String(row.id),
     title: row.title,
     originalTitle: row.originalTitle,
     mediaType: mapTitleTypeToMediaType(row.titleType),
@@ -202,8 +203,13 @@ export async function searchCatalogTitles(
 }
 
 export async function getTitleDetailsById(id: string): Promise<TitleDetails | null> {
+  const parsedId = parsePositiveIntId(id);
+  if (!parsedId) {
+    return null;
+  }
+
   const row = await prisma.title.findUnique({
-    where: { id },
+    where: { id: parsedId },
     include: {
       genres: {
         include: {
@@ -238,7 +244,7 @@ export async function getTitleDetailsById(id: string): Promise<TitleDetails | nu
     originalLanguage: row.originalLanguage ?? "en",
     credits: {
       cast: row.cast.map((entry) => ({
-        id: entry.person.id,
+        id: String(entry.person.id),
         name: entry.person.name,
         character: entry.character ?? undefined,
         profilePath: entry.person.profilePath,
@@ -246,7 +252,7 @@ export async function getTitleDetailsById(id: string): Promise<TitleDetails | nu
       crew: [],
     },
     trailers: row.trailers.map<Trailer>((trailer) => ({
-      id: trailer.id,
+      id: String(trailer.id),
       key: trailer.key,
       name: trailer.name,
       site: trailer.site,
@@ -254,7 +260,7 @@ export async function getTitleDetailsById(id: string): Promise<TitleDetails | nu
       official: trailer.official,
     })),
     seasons: row.seasons.map((season) => ({
-      id: season.id,
+      id: String(season.id),
       seasonNumber: season.seasonNumber,
       name: season.name,
       overview: season.overview,
@@ -266,10 +272,15 @@ export async function getTitleDetailsById(id: string): Promise<TitleDetails | nu
 }
 
 export async function getEpisodesBySeason(tvId: string, seasonNumber: number): Promise<Episode[]> {
+  const parsedTitleId = parsePositiveIntId(tvId);
+  if (!parsedTitleId) {
+    return [];
+  }
+
   const season = await prisma.season.findUnique({
     where: {
       titleId_seasonNumber: {
-        titleId: tvId,
+        titleId: parsedTitleId,
         seasonNumber,
       },
     },
@@ -287,7 +298,7 @@ export async function getEpisodesBySeason(tvId: string, seasonNumber: number): P
   }
 
   return season.episodes.map((episode) => ({
-    id: episode.id,
+    id: String(episode.id),
     episodeNumber: episode.episodeNumber,
     name: episode.name,
     overview: episode.overview,

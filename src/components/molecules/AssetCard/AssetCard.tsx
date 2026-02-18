@@ -60,12 +60,7 @@ export function AssetCard({
         onKeyDown={onLinkKeyDown}
       >
         <div className={styles.assetCard__imageWrapper}>
-          <img
-            src={imageUrl}
-            alt={imageAlt || title}
-            sizes="(max-width: 640px) 44vw, (max-width: 1024px) 28vw, 200px"
-            className={styles.assetCard__image}
-          />
+          <img src={imageUrl} alt={imageAlt || title} className={styles.assetCard__image} />
 
           {/* Badges overlay */}
           <div className={styles.assetCard__badges}>

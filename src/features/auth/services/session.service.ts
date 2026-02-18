@@ -33,7 +33,7 @@ async function getSessionTokenFromCookie(): Promise<string | null> {
   return token ?? null;
 }
 
-export async function createSession(userId: string): Promise<void> {
+export async function createSession(userId: number): Promise<void> {
   const token = generateSessionToken();
   const expiresAt = buildSessionExpiryDate();
 

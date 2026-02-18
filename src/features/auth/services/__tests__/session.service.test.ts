@@ -32,15 +32,15 @@ describe("session.service", () => {
 
   it("creates session record and cookie", async () => {
     vi.mocked(prisma.session.create).mockResolvedValue({
-      id: "session-1",
-      userId: "user-1",
+      id: 1,
+      userId: 1,
       token: "token",
       issuedAt: new Date(),
       expiresAt: new Date(),
       revokedAt: null,
     });
 
-    await createSession("user-1");
+    await createSession(1);
 
     expect(prisma.session.create).toHaveBeenCalled();
     expect(cookieStore.set).toHaveBeenCalled();
@@ -57,14 +57,14 @@ describe("session.service", () => {
   it("returns user from valid session", async () => {
     cookieStore.get.mockReturnValue({ value: "token-1" });
     vi.mocked(prisma.session.findUnique).mockResolvedValue({
-      id: "session-1",
-      userId: "user-1",
+      id: 1,
+      userId: 1,
       token: "token-1",
       issuedAt: new Date(),
       expiresAt: new Date(Date.now() + 60_000),
       revokedAt: null,
       user: {
-        id: "user-1",
+        id: 1,
         email: "test@example.com",
       },
     } as never);
@@ -72,7 +72,7 @@ describe("session.service", () => {
     const result = await getOptionalUser();
 
     expect(result).toEqual({
-      id: "user-1",
+      id: 1,
       email: "test@example.com",
     });
   });

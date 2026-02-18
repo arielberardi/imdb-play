@@ -1,5 +1,6 @@
 import type { ProgressItem } from "@/features/progress/types";
 import type { MediaType } from "@/generated/prisma";
+import { parsePositiveIntId } from "@/lib/ids";
 import prisma from "@/lib/prisma";
 
 function toProgressPercent(progressSeconds: number, durationSeconds: number): number {
@@ -12,9 +13,9 @@ function toProgressPercent(progressSeconds: number, durationSeconds: number): nu
 }
 
 function withProgressPercent(item: {
-  id: string;
-  userId: string;
-  titleId: string;
+  id: number;
+  userId: number;
+  titleId: number;
   mediaType: MediaType;
   progressSeconds: number;
   durationSeconds: number;
@@ -22,22 +23,31 @@ function withProgressPercent(item: {
 }): ProgressItem {
   return {
     ...item,
+    id: String(item.id),
+    userId: String(item.userId),
+    titleId: String(item.titleId),
     progressPercent: toProgressPercent(item.progressSeconds, item.durationSeconds),
   };
 }
 
 export async function upsertProgress(
-  userId: string,
-  titleId: string,
+  userId: string | number,
+  titleId: string | number,
   mediaType: MediaType,
   progressSeconds: number,
   durationSeconds: number,
 ): Promise<ProgressItem> {
+  const parsedUserId = parsePositiveIntId(userId);
+  const parsedTitleId = parsePositiveIntId(titleId);
+  if (!parsedUserId || !parsedTitleId) {
+    throw new Error("Invalid userId or titleId for progress update.");
+  }
+
   const progress = await prisma.continueWatching.upsert({
     where: {
       userId_titleId: {
-        userId,
-        titleId,
+        userId: parsedUserId,
+        titleId: parsedTitleId,
       },
     },
     update: {
@@ -46,8 +56,8 @@ export async function upsertProgress(
       durationSeconds,
     },
     create: {
-      userId,
-      titleId,
+      userId: parsedUserId,
+      titleId: parsedTitleId,
       mediaType,
       progressSeconds,
       durationSeconds,
@@ -57,12 +67,21 @@ export async function upsertProgress(
   return withProgressPercent(progress);
 }
 
-export async function getProgress(userId: string, titleId: string): Promise<ProgressItem | null> {
+export async function getProgress(
+  userId: string | number,
+  titleId: string | number,
+): Promise<ProgressItem | null> {
+  const parsedUserId = parsePositiveIntId(userId);
+  const parsedTitleId = parsePositiveIntId(titleId);
+  if (!parsedUserId || !parsedTitleId) {
+    return null;
+  }
+
   const progress = await prisma.continueWatching.findUnique({
     where: {
       userId_titleId: {
-        userId,
-        titleId,
+        userId: parsedUserId,
+        titleId: parsedTitleId,
       },
     },
   });
@@ -74,10 +93,15 @@ export async function getProgress(userId: string, titleId: string): Promise<Prog
   return withProgressPercent(progress);
 }
 
-export async function listContinueWatching(userId: string): Promise<ProgressItem[]> {
+export async function listContinueWatching(userId: string | number): Promise<ProgressItem[]> {
+  const parsedUserId = parsePositiveIntId(userId);
+  if (!parsedUserId) {
+    return [];
+  }
+
   const items = await prisma.continueWatching.findMany({
     where: {
-      userId,
+      userId: parsedUserId,
     },
     orderBy: {
       updatedAt: "desc",
@@ -87,11 +111,20 @@ export async function listContinueWatching(userId: string): Promise<ProgressItem
   return items.map(withProgressPercent).filter((item) => item.progressPercent < 95);
 }
 
-export async function removeProgress(userId: string, titleId: string): Promise<void> {
+export async function removeProgress(
+  userId: string | number,
+  titleId: string | number,
+): Promise<void> {
+  const parsedUserId = parsePositiveIntId(userId);
+  const parsedTitleId = parsePositiveIntId(titleId);
+  if (!parsedUserId || !parsedTitleId) {
+    return;
+  }
+
   await prisma.continueWatching.deleteMany({
     where: {
-      userId,
-      titleId,
+      userId: parsedUserId,
+      titleId: parsedTitleId,
     },
   });
 }

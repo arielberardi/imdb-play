@@ -25,14 +25,14 @@ export const Default: Story = {
 export const LoggedIn: Story = {
   args: {
     user: {
-      id: "demo-user",
+      id: 1,
       email: "member@imdbplay.dev",
     },
   },
   render: () => (
     <NavbarView
       user={{
-        id: "demo-user",
+        id: 1,
         email: "member@imdbplay.dev",
       }}
       onSignOut={() => {}}

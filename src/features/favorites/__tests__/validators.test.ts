@@ -5,7 +5,7 @@ import { addFavoriteSchema } from "../validators";
 describe("favorites validators", () => {
   it("accepts valid payload", () => {
     const parsed = addFavoriteSchema.safeParse({
-      titleId: "tt123",
+      titleId: "123",
       mediaType: MediaType.MOVIE,
     });
 
@@ -15,6 +15,15 @@ describe("favorites validators", () => {
   it("rejects blank title id", () => {
     const parsed = addFavoriteSchema.safeParse({
       titleId: "   ",
+      mediaType: MediaType.SERIES,
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects non-numeric title id", () => {
+    const parsed = addFavoriteSchema.safeParse({
+      titleId: "tt123",
       mediaType: MediaType.SERIES,
     });
 

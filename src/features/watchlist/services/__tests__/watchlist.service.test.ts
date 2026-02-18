@@ -27,51 +27,52 @@ describe("watchlist.service", () => {
   });
 
   it("upserts watchlist record", async () => {
-    await addToWatchlist("user-1", "tt1", MediaType.SERIES);
+    await addToWatchlist("1", "10", MediaType.SERIES);
 
     expect(prisma.watchlist.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { userId_titleId: { userId: "user-1", titleId: "tt1" } },
+        where: { userId_titleId: { userId: 1, titleId: 10 } },
       }),
     );
   });
 
   it("removes watchlist item", async () => {
-    await removeFromWatchlist("user-1", "tt1");
+    await removeFromWatchlist("1", "10");
 
     expect(prisma.watchlist.deleteMany).toHaveBeenCalledWith({
-      where: { userId: "user-1", titleId: "tt1" },
+      where: { userId: 1, titleId: 10 },
     });
   });
 
   it("returns true when item is in watchlist", async () => {
-    vi.mocked(prisma.watchlist.findUnique).mockResolvedValue({ id: "w1" } as never);
+    vi.mocked(prisma.watchlist.findUnique).mockResolvedValue({ id: 1 } as never);
 
-    await expect(isInWatchlist("user-1", "tt1")).resolves.toBe(true);
+    await expect(isInWatchlist("1", "10")).resolves.toBe(true);
   });
 
   it("returns false when item is not in watchlist", async () => {
     vi.mocked(prisma.watchlist.findUnique).mockResolvedValue(null);
 
-    await expect(isInWatchlist("user-1", "tt1")).resolves.toBe(false);
+    await expect(isInWatchlist("1", "10")).resolves.toBe(false);
   });
 
   it("lists watchlist items", async () => {
     vi.mocked(prisma.watchlist.findMany).mockResolvedValue([
       {
-        id: "w1",
-        userId: "user-1",
-        titleId: "tt1",
+        id: 1,
+        userId: 1,
+        titleId: 10,
         mediaType: MediaType.MOVIE,
         createdAt: new Date(),
       },
     ] as never);
 
-    const result = await listUserWatchlist("user-1");
+    const result = await listUserWatchlist("1");
 
     expect(result).toHaveLength(1);
+    expect(result[0]?.titleId).toBe("10");
     expect(prisma.watchlist.findMany).toHaveBeenCalledWith({
-      where: { userId: "user-1" },
+      where: { userId: 1 },
       orderBy: { createdAt: "desc" },
     });
   });
@@ -79,6 +80,6 @@ describe("watchlist.service", () => {
   it("counts watchlist items", async () => {
     vi.mocked(prisma.watchlist.count).mockResolvedValue(4);
 
-    await expect(getWatchlistCount("user-1")).resolves.toBe(4);
+    await expect(getWatchlistCount("1")).resolves.toBe(4);
   });
 });

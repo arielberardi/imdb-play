@@ -11,7 +11,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { listContinueWatching, removeProgress, upsertProgress } from "./services/progress.service";
 
-const removeProgressSchema = z.string().trim().min(1, "Title id is required.");
+const removeProgressSchema = z
+  .string()
+  .trim()
+  .regex(/^\d+$/, "Title id must be a positive integer.");
 
 const upsertProgressSafeAction = authRateLimitedAction({
   keyPrefix: "progress:upsert",
