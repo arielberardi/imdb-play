@@ -279,7 +279,7 @@ async function main() {
     throw new Error("DATABASE_URL is required to seed catalog data.");
   }
 
-  if (!process.env.TMDB_API_KEY || !process.env.TMDB_API_TOKEN) {
+  if (!process.env.TMDB_API_TOKEN) {
     throw new Error("Missing access keys to TheMovie DB");
   }
 
