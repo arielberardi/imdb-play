@@ -31,7 +31,7 @@
 }
 
 .rail__container--withNav {
-  padding: 0 calc(var(--spacing-xl) + 2.5rem);
+  padding: 1rem calc(var(--spacing-xl) + 2.5rem);
 }
 
 .rail__container::-webkit-scrollbar {
@@ -81,7 +81,7 @@
   }
 
   .rail__container--withNav {
-    padding: 0 calc(var(--spacing-lg) + 2.25rem);
+    padding: 1rem calc(var(--spacing-lg) + 2.25rem);
   }
 
   .rail__navButton {
